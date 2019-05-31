@@ -15,8 +15,8 @@ openUrl.close()
 d = json.loads(r.decode())
 df = pd.DataFrame(d)
 
-original_columns=[u'date', u'close',  u'high', u'low', u'open', u'volume']
-new_columns = ['Timestamp','Close','High','Low','Open','Volume']
+original_columns=[u'date',  u'high', u'low', u'open', u'volume', u'close']
+new_columns = ['Timestamp','High','Low','Open','Volume','Close']
 df = df.loc[:,original_columns]
 df.columns = new_columns
 df.to_csv('predict-set-20190527-0531.csv',index=None)
