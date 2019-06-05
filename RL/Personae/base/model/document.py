@@ -3,6 +3,54 @@
 from mongoengine import Document
 from mongoengine import StringField, FloatField, DateTimeField
 
+from pandas import read_csv
+import numpy as np
+
+class Bitcoin():
+    code = StringField(required=True)
+    # 交易日
+    date = DateTimeField(required=True)
+    # 开盘价
+    open = FloatField()
+    # 最高价
+    high = FloatField()
+    # 最低价
+    low = FloatField()
+    # 收盘价
+    close = FloatField()
+    # 成交量
+    volume = FloatField()
+
+    def save_if_need(self):
+        return self.save() if len(self.__class__.objects(code=self.code, date=self.date)) < 1 else None
+
+    def to_state(self):
+        stock_dic = self.to_mongo()
+        stock_dic.pop('_id')
+        stock_dic.pop('code')
+        stock_dic.pop('date')
+        return stock_dic.values()
+
+    def to_dic(self):
+        # TODO: a single code, have not use code list
+        df = read_csv('../../../../dataset/bitcoin201901to201905.csv', header=0)
+        # dummy index, for comply the format we use in market.py
+        df['dummy'] = range(df.shape[0])
+        df = df[['dummy', 'Timestamp', 'Open', 'High', 'Low', 'Close', 'Volume']]
+        return np.transpose(df.values)
+
+    @classmethod
+    def get_k_data(cls, code, start, end):
+        # TODO: a single code, have not use code list
+        # df = read_csv('../../../../dataset/bitcoin201901to201905.csv', header=0, index_col=0)
+        return [Bitcoin()]
+
+    @classmethod
+    def exist_in_db(cls, code):
+        # TODO
+        # return True if cls.objects(code=code)[:1].count() else False
+        print("exist ", code)
+        return True
 
 class Stock(Document):
     # 股票代码

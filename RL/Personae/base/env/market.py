@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 from base.env.trader import Trader
-from base.model.document import Stock, Future
+from base.model.document import Stock, Future, Bitcoin
 from sklearn.preprocessing import StandardScaler
 
 
@@ -14,7 +14,7 @@ class Market(object):
     Running = 0
     Done = -1
 
-    def __init__(self, codes, start_date="2008-01-01", end_date="2018-01-01", **options):
+    def __init__(self, codes, start_date="2019-01-01", end_date="2019-05-01", **options):
 
         # Initialize codes.
         self.codes = codes
@@ -109,7 +109,7 @@ class Market(object):
         self.state_codes = self.codes + self.index_codes
         self.scaler = [scaler() for _ in self.state_codes]
         self.trader = Trader(self, cash=self.init_cash)
-        self.doc_class = Stock if self.m_type == 'stock' else Future
+        self.doc_class = Stock if self.m_type == 'stock' else Bitcoin if self.m_type == 'bitcoin' else Future
 
     def _init_data(self, start_date, end_date):
         self._init_data_frames(start_date, end_date)
@@ -120,6 +120,7 @@ class Market(object):
         if not self.state_code_count:
             raise ValueError("Codes cannot be empty.")
         for code in self.state_codes:
+            print("validate_code", code, self.doc_class)
             if not self.doc_class.exist_in_db(code):
                 raise ValueError("Code: {} not exists in database.".format(code))
 
@@ -139,8 +140,20 @@ class Market(object):
             # Split instruments.
             instruments = [instrument[2:] for instrument in instrument_dicts]
             # Update dates set.
-            dates_set = dates_set.union(dates)
+            print(dates)
+            if self.m_type == 'bitcoin':
+                print("dates.shape", len(dates), len(dates[0]))
+                #dates=dates
+                dates_set = set(dates[0])
+                print("dates_set", len(dates_set), type(dates_set))
+                #dates_set = np.transpose(dates_set)
+                instruments = instruments[0]
+                instruments = np.transpose(instruments)
+            else:
+                dates_set = dates_set.union(dates)
             # Build origin and scaled frames.
+            print("instruments.shape", len(instruments[0]))
+            print(instruments)
             scaler = self.scaler[index]
             scaler.fit(instruments)
             instruments_scaled = scaler.transform(instruments)
@@ -150,13 +163,23 @@ class Market(object):
             self.origin_frames[code] = origin_frame
             self.scaled_frames[code] = scaled_frame
         # Init date iter.
-        self.dates = sorted(list(dates_set))
+        if self.m_type != 'bitcoin':
+            self.dates = sorted(list(dates_set))
+        else:
+            print("dates set type", type(self.dates))
+            self.dates = list(dates_set)
+            print("dates set: ", type(self.dates))
+
         # Rebuild index.
         for code in self.state_codes:
             origin_frame = self.origin_frames[code]
             scaled_frame = self.scaled_frames[code]
-            self.origin_frames[code] = origin_frame.reindex(self.dates, method='bfill')
-            self.scaled_frames[code] = scaled_frame.reindex(self.dates, method='bfill')
+            print(origin_frame)
+            print("type", type(origin_frame), type(self.dates))
+
+            #TODO: simply comment out
+            #self.origin_frames[code] = origin_frame.reindex(self.dates, method='bfill')
+            #self.scaled_frames[code] = scaled_frame.reindex(self.dates, method='bfill')
 
     def _init_env_data(self):
         if not self.use_sequence:
@@ -167,6 +190,7 @@ class Market(object):
     # 用上一行数据, 预测下一行
     def _init_series_data(self):
         # Calculate data count.
+        print(type(self.dates))
         self.data_count = len(self.dates[: -1])
         # Calculate bound index.
         self.bound_index = int(self.data_count * self.training_data_ratio)
@@ -240,6 +264,7 @@ class Market(object):
         self.e_data_indices = self.data_indices[self.bound_index:]
         # Generate train and eval dates.
         self.t_dates = self.dates[:self.bound_index]
+        print("init_data_indices ", self.dates, self.t_dates)
         self.e_dates = self.dates[self.bound_index:]
 
     def _origin_data(self, code, date):
@@ -260,6 +285,7 @@ class Market(object):
         # Reset trader.
         self.trader.reset()
         # Reset iter dates by mode.
+        print("reset(): ", self.t_dates)
         self.iter_dates = iter(self.t_dates) if mode == 'train' else iter(self.e_dates)
         try:
             self.current_date = next(self.iter_dates)
