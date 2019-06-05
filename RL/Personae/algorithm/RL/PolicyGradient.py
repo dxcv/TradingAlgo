@@ -5,6 +5,9 @@ import numpy as np
 
 import os
 
+import sys
+sys.path.append(os.path.dirname(__file__) +os.sep+'../../')
+
 from algorithm import config
 from base.env.market import Market
 from checkpoints import CHECKPOINTS_DIR
