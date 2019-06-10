@@ -32,7 +32,7 @@ class PolicyGradient:
 		running_add = 0
 		r = r.flatten()
 
-		for t in reversed(xrange(0, r.size)):
+		for t in reversed(range(0, r.size)):
 			if r[t] != 0:
 				running_add = 0
 
@@ -46,9 +46,9 @@ class PolicyGradient:
 		model = self.model
 		avg_reward_sum = 0.
 
-		for e in xrange(max_episode):
-			env.reset()
-			observation = env.reset()
+		for e in range(max_episode):
+			env._reset()
+			observation = env._reset()
 			game_over = False
 			reward_sum = 0
 
@@ -75,7 +75,7 @@ class PolicyGradient:
 					y = [float(action)]
 					outputs.append(y)
 
-				observation, reward, game_over, info = self.env.step(action)
+				observation, reward, game_over, info = self.env._step(action)
 				reward_sum += float(reward)
 
 				rewards.append(float(reward))
@@ -83,21 +83,21 @@ class PolicyGradient:
 				if verbose > 0:
 					if env.actions[action] == "LONG" or env.actions[action] == "SHORT":
 						color = bcolors.FAIL if env.actions[action] == "LONG" else bcolors.OKBLUE
-						print "%s:\t%s\t%.2f\t%.2f\t" % (info["dt"], color + env.actions[action] + bcolors.ENDC, reward_sum, info["cum"]) + ("\t".join(["%s:%.2f" % (l, i) for l, i in zip(env.actions, aprob.tolist())]))
+						print ("%s:\t%s\t%.2f\t%.2f\t" % (info["dt"], color + env.actions[action] + bcolors.ENDC, reward_sum, info["cum"]) + ("\t".join(["%s:%.2f" % (l, i) for l, i in zip(env.actions, aprob.tolist())])))
 
 			avg_reward_sum = avg_reward_sum * 0.99 + reward_sum * 0.01
 			toPrint = "%d\t%s\t%s\t%.2f\t%.2f" % (e, info["code"], (bcolors.FAIL if reward_sum >= 0 else bcolors.OKBLUE) + ("%.2f" % reward_sum) + bcolors.ENDC, info["cum"], avg_reward_sum)
-			print toPrint
+			print (toPrint)
 			if self.history_filename != None:
 				os.system("echo %s >> %s" % (toPrint, self.history_filename))
 
 
 			dim = len(inputs[0])
-			inputs_ = [[] for i in xrange(dim)]
+			inputs_ = [[] for i in range(dim)]
 			for obs in inputs:
 				for i, block in enumerate(obs):
 					inputs_[i].append(block[0])
-			inputs_ = [np.array(inputs_[i]) for i in xrange(dim)]
+			inputs_ = [np.array(inputs_[i]) for i in range(dim)]
 
 			outputs_ = np.vstack(outputs)
 			predicteds_ = np.vstack(predicteds)
@@ -112,7 +112,8 @@ class PolicyGradient:
 				reward, discounted_reward = r
 
 				if verbose > 1:
-					print outputs_[i],
+#					print (outputs_[i],)
+					print (outputs_[i],)
 				
 				#outputs_[i] = 0.5 + (2 * outputs_[i] - 1) * discounted_reward
 				if discounted_reward < 0:
@@ -121,7 +122,7 @@ class PolicyGradient:
 				outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * abs(discounted_reward)))
 
 				if verbose > 1:
-					print predicteds_[i], outputs_[i], reward, discounted_reward
+					print (predicteds_[i], outputs_[i], reward, discounted_reward)
 
 			model.fit(inputs_, outputs_, nb_epoch = 1, verbose = 0, shuffle = True)
 			model.save_weights(self.model_filename)
