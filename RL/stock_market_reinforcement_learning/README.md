@@ -1,3 +1,9 @@
+
+##TODO
+- update to keras 2.x (currently use 1.x)
+  - https://github.com/keras-team/keras/issues/9259
+-----------------------------------------
+
 # Stock Trading Market OpenAI Gym Environment with Deep Reinforcement Learning using Keras
 
 ## Overview
