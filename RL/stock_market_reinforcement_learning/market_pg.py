@@ -27,12 +27,15 @@ class PolicyGradient:
 		sgd = SGD(lr = 0.1, decay = 1e-6, momentum = 0.9, nesterov = True)
 		self.model.compile(loss='mse', optimizer='rmsprop')
 
+	# 更详细解释: https://blog.csdn.net/heyc861221/article/details/80132054
 	def discount_rewards(self, r):
 		discounted_r = np.zeros_like(r)
 		running_add = 0
 		r = r.flatten()
 
+		# 从后向前推算
 		for t in reversed(range(0, r.size)):
+			# TODO: running_add 为 0 ?
 			if r[t] != 0:
 				running_add = 0
 
@@ -41,7 +44,7 @@ class PolicyGradient:
 
 		return discounted_r
 
-	def train(self, max_episode = 1000000, max_path_length = 200, verbose = 0):
+	def train(self, max_episode = 1000, max_path_length = 200, verbose = 0):
 		env = self.env
 		model = self.model
 		avg_reward_sum = 0.
@@ -119,6 +122,8 @@ class PolicyGradient:
 				if discounted_reward < 0:
 					outputs_[i] = 1 - outputs_[i]
 					outputs_[i] = outputs_[i] / sum(outputs_[i])
+
+				# softmax的log函数
 				outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * abs(discounted_reward)))
 
 				if verbose > 1:
@@ -148,4 +153,4 @@ if __name__ == "__main__":
 	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
 
 	pg = PolicyGradient(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename)
-	pg.train(verbose = 1)
+	pg.train(verbose = 2)
