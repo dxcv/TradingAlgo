@@ -86,6 +86,7 @@ class MarketEnv(gym.Env):
 				if self.cumulative_reward:
 					self.reward = self.reward / max(1, len(self.boughts))
 
+				# 止跌。
 				if self.sudden_death * len(self.boughts) > self.reward:
 					self.done = True
 
@@ -115,6 +116,8 @@ class MarketEnv(gym.Env):
 			self.boughts[i] = self.boughts[i] * MarketEnv.PENALTY * (1 + vari * (-1 if sum(self.boughts) < 0 else 1))
 
 		self.defineState()
+		# currentTargetIndex 初始为scope, 用过去scope里面的data计算，
+		# 然后每次+1, 直到结束
 		self.currentTargetIndex += 1
 		if self.currentTargetIndex >= len(self.targetDates) or self.endDate <= self.targetDates[self.currentTargetIndex]:
 			self.done = True
@@ -172,6 +175,8 @@ class MarketEnv(gym.Env):
 		subjectVolume = []
 		for i in range(self.scope):
 			try:
+				# data[dt] = (high_, low_, close_, volume_)
+				# 从后往前一次存储 close/volume的pair, state其实就是这些pair
 				subject.append([self.target[self.targetDates[self.currentTargetIndex - 1 - i]][2]])
 				subjectVolume.append([self.target[self.targetDates[self.currentTargetIndex - 1 - i]][3]])
 			except Exception as e:
