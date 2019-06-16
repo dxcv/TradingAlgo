@@ -36,9 +36,16 @@ class PolicyGradient:
 		# 从后向前推算
 		for t in reversed(range(0, r.size)):
 			# TODO: running_add 为 0 ?
+			# 应该是参照pong game,因为游戏里面，只有游戏结束了才有一个reward。
+			# 这里是一个reset,每轮游戏结束，即reward非空，重置running_add
+			# Reset the running sum at a game boundary.
 			if r[t] != 0:
 				running_add = 0
 
+			# 拆开来就是，run_add 初始为当前reward, 即r[t]
+			# run_add = (r[t] * discount + r[t+1]) * discount + r[t+2] + ...
+			#		   = r[t] * discount^2 + r[t+1] * discount^1 + r[t+2] + ...
+            # 即公式中的。E(Discount^n * Reward)
 			running_add = running_add * self.discount + r[t]
 			discounted_r[t] = running_add
 
