@@ -7,6 +7,7 @@ from gym import spaces
 
 class MarketEnv(gym.Env):
 
+	# 手续费
 	PENALTY = 1 #0.999756079
 
 	def __init__(self, dir_path, target_codes, input_codes, start_date, end_date, scope = 60, sudden_death = -1., cumulative_reward = False):
@@ -79,39 +80,62 @@ class MarketEnv(gym.Env):
 			return self.state, self.reward, self.done, {}
 
 		self.reward = 0
+
+		# 每次非LONG即SHORT
+		# 如果是SHORT,会一直是SHORT, 如果是LONG，应该一直是LONG。
+		# 例如，SHORT中途，发生LONG，会清空postion(给Boughts位置空list)，重置boughts 
+		# 这样boughts > 0, 代表所持有的position为LONG；< 0，代表position为Short
 		if self.actions[action] == "LONG":
+			# 之前是否持有SHORT position
 			if sum(self.boughts) < 0:
 				for b in self.boughts:
+					# b是负数，因为是SHORT，b应该小于-1，才有钱赚。然后在前面加负号，转成正值
 					self.reward += -(b + 1)
 				if self.cumulative_reward:
 					self.reward = self.reward / max(1, len(self.boughts))
 
-				# 止跌。
+				# 止跌, reward已经低于阈值, DONE
 				if self.sudden_death * len(self.boughts) > self.reward:
 					self.done = True
 
 				self.boughts = []
 
+			# 买1个
 			self.boughts.append(1.0)
 		elif self.actions[action] == "SHORT":
+			# 之前是否持有LONG position
 			if sum(self.boughts) > 0:
 				for b in self.boughts:
+					# b是正数，因为是LONG，b应该大于1，才有钱赚。
 					self.reward += b - 1
 				if self.cumulative_reward:
 					self.reward = self.reward / max(1, len(self.boughts))
 
+				# 止跌, reward已经低于阈值, DONE
 				if self.sudden_death * len(self.boughts) > self.reward:
 					self.done = True
 
 				self.boughts = []
 
+			# 卖1个
 			self.boughts.append(-1.0)
 		else:
 			pass
 
+		# close定义为，C(t+1) - C(t) / C(t) = C(t+1)/C(t) - 1
+		# vari即为当前close值, 代入 cum 得到
+		# cum = cum * (1 + vari) = cum * ( C(t+1)/C(t) ) 
+		# 下一次更新cum时， cum = cum * C(t+1) / C(t) * C(t+2) /C(t+1) = cum * C(t+2) / C(t)
+		# 这样，cum始终为当前Close值与初始值的比例值
 		vari = self.target[self.targetDates[self.currentTargetIndex]][2]
 		self.cum = self.cum * (1 + vari)
 
+		# 对每个step, 每次都要更新所持有position
+		# LONG的情况下，因为是+1, 
+		# SHORT的情况下，因为append的是-1, 先乘上-1变为正值后，再乘以vari加1
+		# 类似与上面的cum更新。
+		# 保证所有bought 都更新为 boughts[i] * (1+vari) * penalty
+		#                         ~~~~~~~~~~~~~~~~~~~~~
 		for i in range(len(self.boughts)):
 			self.boughts[i] = self.boughts[i] * MarketEnv.PENALTY * (1 + vari * (-1 if sum(self.boughts) < 0 else 1))
 
@@ -184,6 +208,8 @@ class MarketEnv(gym.Env):
 				self.done = True
 		tmpState.append([[subject, subjectVolume]])
 
+		# tmpState 有2行，第一行是[budget, size, position]]
+		# 第二行是[subject, subjectVolume]
 		tmpState = [np.array(i) for i in tmpState]
 		self.state = tmpState
 
