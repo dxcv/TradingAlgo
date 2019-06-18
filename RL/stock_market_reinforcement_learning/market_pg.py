@@ -24,9 +24,11 @@ class PolicyGradient:
 		self.model_filename = model_filename
 		self.history_filename = history_filename
 
+		# 没有利用SGD 
 		from keras.optimizers import SGD
 		self.model = MarketPolicyGradientModelBuilder(modelFilename).getModel()
 		sgd = SGD(lr = 0.1, decay = 1e-6, momentum = 0.9, nesterov = True)
+		# 利用rmsprop 
 		self.model.compile(loss='mse', optimizer='rmsprop')
 
 	# 更详细解释: https://blog.csdn.net/heyc861221/article/details/80132054
@@ -77,6 +79,7 @@ class PolicyGradient:
 			f_episode = "episode_{0}.csv".format(e)
 			os.system("rm -rf {0}".format(f_episode))
 
+			print(observation)
 			while not game_over:
 				aprob = model.predict(observation)[0]
 				inputs.append(observation)
@@ -90,7 +93,11 @@ class PolicyGradient:
 
 					outputs.append(y)
 				else:
-					action = 0 if np.random.uniform() < aprob else 1
+					#action = 0 if np.random.uniform() < aprob else 1
+
+					# if aprob = 1.0 reduce it.
+					m_aprob = 0.9 if aprob == 1.0 else aprob
+					action = 0 if np.random.uniform() < m_aprob else 1
 
 					y = [float(action)]
 					outputs.append(y)
@@ -129,7 +136,8 @@ class PolicyGradient:
 			rewards_ = np.vstack(rewards)
 
 			discounted_rewards_ = self.discount_rewards(rewards_)
-			#discounted_rewards_ -= np.mean(discounted_rewards_)
+			# TODO: 不做均值平移应该也可以
+		#	discounted_rewards_ -= np.mean(discounted_rewards_)
 			discounted_rewards_ /= np.std(discounted_rewards_)
 
 			#outputs_ *= discounted_rewards_
@@ -141,14 +149,16 @@ class PolicyGradient:
 					print (outputs_[i],)
 				
 				#outputs_[i] = 0.5 + (2 * outputs_[i] - 1) * discounted_reward
+				# 修正output, reward<0 亏钱，反转所有的output。
+				# 
 				if discounted_reward < 0:
 					outputs_[i] = 1 - outputs_[i]
 					outputs_[i] = outputs_[i] / sum(outputs_[i])
 
-				# softmax的log函数
+				# softmax的log函数求导后的Gradient ?
 				outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * abs(discounted_reward)))
 
-				if verbose > 1:
+				if verbose > 0:
 					print (predicteds_[i], outputs_[i], reward, discounted_reward)
 
 			model.fit(inputs_, outputs_, nb_epoch = 1, verbose = 0, shuffle = True)
@@ -173,7 +183,7 @@ if __name__ == "__main__":
 	f.close()
 
 #	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
-	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1514764800", end_date = "1530406800", sudden_death = -1.0)
+	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1514764800", end_date = "1560828600", sudden_death = -1.0)
 
 	pg = PolicyGradient(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename)
 	pg.train(verbose = 1)
