@@ -4,6 +4,8 @@ import numpy as np
 from market_env import MarketEnv
 from market_model_builder import MarketPolicyGradientModelBuilder
 
+import csv
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -51,10 +53,13 @@ class PolicyGradient:
 
 		return discounted_r
 
-	def train(self, max_episode = 1000, max_path_length = 200, verbose = 0):
+	def train(self, max_episode = 10, max_path_length = 200, verbose = 0):
 		env = self.env
 		model = self.model
 		avg_reward_sum = 0.
+
+		#f_eps = open("episode.csv","w")
+		#write_eps = csv.write(f_eps)
 
 		for e in range(max_episode):
 			env._reset()
@@ -66,6 +71,11 @@ class PolicyGradient:
 			outputs = []
 			predicteds = []
 			rewards = []
+
+			#f_iter = open("episode_{0}.csv".format(e),"w")
+			#write_iter = csv.writer(f_iter)
+			f_episode = "episode_{0}.csv".format(e)
+			os.system("rm -rf {0}".format(f_episode))
 
 			while not game_over:
 				aprob = model.predict(observation)[0]
@@ -94,6 +104,11 @@ class PolicyGradient:
 					if env.actions[action] == "LONG" or env.actions[action] == "SHORT":
 						color = bcolors.FAIL if env.actions[action] == "LONG" else bcolors.OKBLUE
 						print ("%s:\t%s\t%.2f\t%.2f\t" % (info["dt"], color + env.actions[action] + bcolors.ENDC, reward_sum, info["cum"]) + ("\t".join(["%s:%.2f" % (l, i) for l, i in zip(env.actions, aprob.tolist())])))
+					#write_iter.writerow("%s:\t%s\t%.2f\t%.2f\t" % (info["dt"], env.actions[action], reward_sum, info["cum"]) + ("\t".join(["%s:%.2f" % (l, i) for l, i in zip(env.actions, aprob.tolist())])))
+					os.system("echo %s >> %s" % ("%s:\t%s\t%.2f\t%.2f\t" % (info["dt"], env.actions[action], reward_sum, info["cum"]) + ("\t".join(["%s:%.2f" % (l, i) for l, i in zip(env.actions, aprob.tolist())])),
+							  f_episode))
+
+			#write_iter.close()
 
 			avg_reward_sum = avg_reward_sum * 0.99 + reward_sum * 0.01
 			toPrint = "%d\t%s\t%s\t%.2f\t%.2f" % (e, info["code"], (bcolors.FAIL if reward_sum >= 0 else bcolors.OKBLUE) + ("%.2f" % reward_sum) + bcolors.ENDC, info["cum"], avg_reward_sum)
@@ -157,7 +172,8 @@ if __name__ == "__main__":
 
 	f.close()
 
-	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
+#	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
+	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1546300800", end_date = "1558673100", sudden_death = -1.0)
 
 	pg = PolicyGradient(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename)
-	pg.train(verbose = 2)
+	pg.train(verbose = 1)

@@ -5,6 +5,23 @@ import math
 import gym
 from gym import spaces
 
+
+def is_number(s):
+	try:
+		float(s)
+		return True
+	except ValueError:
+		pass
+
+	try:
+		import unicodedata
+		unicodedata.numeric(s)
+		return True
+	except (TypeError, ValueError):
+		pass
+
+	return False
+
 class MarketEnv(gym.Env):
 
 	# 手续费
@@ -32,13 +49,19 @@ class MarketEnv(gym.Env):
 				f = open(fn, "r")
 				for line in f:
 					if line.strip() != "":
-						dt, openPrice, high, low, close, volume = line.strip().split(",")
+#						dt, openPrice, high, low, close, volume = line.strip().split(",")
+						dt, close, high, low, openPrice, volume = line.strip().split(",")
+
+						if is_number(close) == False and is_number(high) == False:
+							continue
+
 						try:
 							if dt >= start_date:						
 								high = float(high) if high != "" else float(close)
 								low = float(low) if low != "" else float(close)
 								close = float(close)
-								volume = int(volume)
+							#	volume = int(volume)
+								volume = float(volume)
 
 								if lastClose > 0 and close > 0 and lastVolume > 0:
 									close_ = (close - lastClose) / lastClose
@@ -56,6 +79,7 @@ class MarketEnv(gym.Env):
 			except Exception as e:
 				print (e)
 
+			#print(len(data.keys()))
 			if len(data.keys()) > scope:
 				self.dataMap[code] = data
 				if code in target_codes:
@@ -82,8 +106,9 @@ class MarketEnv(gym.Env):
 		self.reward = 0
 
 		# 每次非LONG即SHORT
-		# 如果是SHORT,会一直是SHORT, 如果是LONG，应该一直是LONG。
-		# 例如，SHORT中途，发生LONG，会清空postion(给Boughts位置空list)，重置boughts 
+		# 如果是SHORT,会一直是SHORT(boughts列表里的数全部小于0),
+		# 如果是LONG，应该一直是LONG(boughts列表里的数全部大于0)。
+		# 但，SHORT中途，发生LONG，会清空SHORT的postion(给Boughts位置空list)，重置boughts后，再LONG 
 		# 这样boughts > 0, 代表所持有的position为LONG；< 0，代表position为Short
 		if self.actions[action] == "LONG":
 			# 之前是否持有SHORT position

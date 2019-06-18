@@ -75,14 +75,15 @@ if __name__ == "__main__":
 
 	f.close()
 
-	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2013-08-26", end_date = "2015-08-25", sudden_death = -1.0)
+#	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2013-08-26", end_date = "2015-08-25", sudden_death = -1.0)
+	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1546300800", end_date = "1558673100", sudden_death = -1.0)
 
 	# parameters
 	epsilon = .5  # exploration
 	min_epsilon = 0.1
-	epoch = 100000
+	epoch = 10
 	max_memory = 5000
-	batch_size = 128
+	batch_size = 1
 	discount = 0.8
 
 	from keras.optimizers import SGD
@@ -97,10 +98,10 @@ if __name__ == "__main__":
 	win_cnt = 0
 	for e in range(epoch):
 		loss = 0.
-		env.reset()
+		env._reset()
 		game_over = False
 		# get initial input
-		input_t = env.reset()
+		input_t = env._reset()
 		cumReward = 0
 
 		while not game_over:
@@ -122,7 +123,7 @@ if __name__ == "__main__":
 					exit()
 
 			# apply action, get rewards and new state
-			input_t, reward, game_over, info = env.step(action)
+			input_t, reward, game_over, info = env._step(action)
 			cumReward += reward
 
 			if env.actions[action] == "LONG" or env.actions[action] == "SHORT":
@@ -144,5 +145,5 @@ if __name__ == "__main__":
 
 		print("Epoch {:03d}/{} | Loss {:.4f} | Win count {} | Epsilon {:.4f}".format(e, epoch, loss, win_cnt, epsilon))
 		# Save trained model weights and architecture, this will be used by the visualization code
-		model.save_weights("model.h5" if modelFilename == None else modelFilename, overwrite=True)
+		model.save_weights("model_dqn.h5" if modelFilename == None else modelFilename, overwrite=True)
 		epsilon = max(min_epsilon, epsilon * 0.99)
