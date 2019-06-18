@@ -41,8 +41,8 @@ class PolicyGradient:
 			# 应该是参照pong game,因为游戏里面，只有游戏结束了才有一个reward。
 			# 这里是一个reset,每轮游戏结束，即reward非空，重置running_add
 			# Reset the running sum at a game boundary.
-			if r[t] != 0:
-				running_add = 0
+#			if r[t] != 0:
+#				running_add = 0
 
 			# 拆开来就是，run_add 初始为当前reward, 即r[t]
 			# run_add = (r[t] * discount + r[t+1]) * discount + r[t+2] + ...
@@ -173,7 +173,7 @@ if __name__ == "__main__":
 	f.close()
 
 #	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
-	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1546300800", end_date = "1558673100", sudden_death = -1.0)
+	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1514764800", end_date = "1530406800", sudden_death = -1.0)
 
 	pg = PolicyGradient(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename)
 	pg.train(verbose = 1)
