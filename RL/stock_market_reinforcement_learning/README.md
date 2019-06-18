@@ -2,6 +2,19 @@
 ##TODO
 - update to keras 2.x (currently use 1.x)
   - https://github.com/keras-team/keras/issues/9259
+  
+ cmd: python market_pg.py ./bit.csv pg.h5 epo_log.txt
+
+change for new dataset:
+- add new config for running cmd
+- change market_pg.py: 
+  - MarketEnv(): dir_path/start_data/end_date
+- change market_env.py 
+  - only change if dataformat is change, like different header of csv
+  
+ Caution:
+ - delete __pycache__ each time before running !
+
 -----------------------------------------
 
 # Stock Trading Market OpenAI Gym Environment with Deep Reinforcement Learning using Keras
