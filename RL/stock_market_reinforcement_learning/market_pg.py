@@ -19,11 +19,13 @@ class bcolors:
 
 class PolicyGradient:
 
-	def __init__(self, env, discount = 0.99, model_filename = None, history_filename = None):
+	def __init__(self, env, discount = 0.99, model_filename = None, history_filename = None, max_memory=200):
 		self.env = env
 		self.discount = discount
 		self.model_filename = model_filename
 		self.history_filename = history_filename
+
+		self.max_memory = max_memory 
 
 		# 没有利用SGD 
 		from keras.optimizers import SGD
@@ -81,6 +83,7 @@ class PolicyGradient:
 			os.system("rm -rf {0}".format(f_episode))
 
 			while not game_over:
+
 				aprob = model.predict(observation)[0]
 				inputs.append(observation)
 				predicteds.append(aprob)
@@ -96,6 +99,7 @@ class PolicyGradient:
 					#action = 0 if np.random.uniform() < aprob else 1
 
 					# if aprob = 1.0 reduce it.
+					# 因为uniform返回[0, 1)
 					m_aprob = 0.9 if aprob == 1.0 else aprob
 					action = 0 if np.random.uniform() < m_aprob else 1
 
@@ -106,6 +110,14 @@ class PolicyGradient:
 				reward_sum += float(reward)
 
 				rewards.append(float(reward))
+
+				# check memory for RNN model
+				if len(inputs[0]) > self.max_memory:
+					del inputs[0]
+					del outputs[0]
+					del predicteds[0]
+					del rewards[0]
+
 
 				if verbose > 0:
 					if env.actions[action] == "LONG" or env.actions[action] == "SHORT":
@@ -162,7 +174,7 @@ class PolicyGradient:
 					if verbose > 0:
 						print (predicteds_[i], outputs_[i], reward, discounted_reward)
 
-				print("fit model input.shape %s, output.shape %s" %( [inputs_[i].shape for i in range(len(inputs_))], [outputs_[i].shape for i in range(len(outputs_))]))
+				print("fit model input.shape %s, output.shape %s" %( [inputs_[i].shape for i in range(len(inputs_))], outputs_.shape))
 				#print("input dim shape: ",range(len(inputs_)))
 				#for i in range(len(inputs_)):
 				#	for j in range(len(inputs_[i])):
@@ -171,7 +183,7 @@ class PolicyGradient:
 				
 				np.set_printoptions(linewidth=200, suppress=True)
 				print("currentTargetIndex:", env.currentTargetIndex)
-				print(inputs_)
+				#print(inputs_)
 				model.fit(inputs_, outputs_, nb_epoch = 1, verbose = 0, shuffle = True)
 				model.save_weights(self.model_filename)
 
