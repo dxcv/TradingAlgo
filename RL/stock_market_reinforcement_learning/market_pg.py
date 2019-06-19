@@ -5,6 +5,7 @@ from market_env import MarketEnv
 from market_model_builder import MarketPolicyGradientModelBuilder
 
 import csv
+import numpy as np 
 
 class bcolors:
     HEADER = '\033[95m'
@@ -79,7 +80,6 @@ class PolicyGradient:
 			f_episode = "episode_{0}.csv".format(e)
 			os.system("rm -rf {0}".format(f_episode))
 
-			print(observation)
 			while not game_over:
 				aprob = model.predict(observation)[0]
 				inputs.append(observation)
@@ -117,52 +117,63 @@ class PolicyGradient:
 
 			#write_iter.close()
 
-			avg_reward_sum = avg_reward_sum * 0.99 + reward_sum * 0.01
-			toPrint = "%d\t%s\t%s\t%.2f\t%.2f" % (e, info["code"], (bcolors.FAIL if reward_sum >= 0 else bcolors.OKBLUE) + ("%.2f" % reward_sum) + bcolors.ENDC, info["cum"], avg_reward_sum)
-			print (toPrint)
-			if self.history_filename != None:
-				os.system("echo %s >> %s" % (toPrint, self.history_filename))
+				avg_reward_sum = avg_reward_sum * 0.99 + reward_sum * 0.01
+				toPrint = "%d\t%s\t%s\t%.2f\t%.2f" % (e, info["code"], (bcolors.FAIL if reward_sum >= 0 else bcolors.OKBLUE) + ("%.2f" % reward_sum) + bcolors.ENDC, info["cum"], avg_reward_sum)
+				print (toPrint)
+				if self.history_filename != None:
+					os.system("echo %s >> %s" % (toPrint, self.history_filename))
 
 
-			dim = len(inputs[0])
-			inputs_ = [[] for i in range(dim)]
-			for obs in inputs:
-				for i, block in enumerate(obs):
-					inputs_[i].append(block[0])
-			inputs_ = [np.array(inputs_[i]) for i in range(dim)]
+				dim = len(inputs[0])
+				inputs_ = [[] for i in range(dim)]
+				for obs in inputs:
+					for i, block in enumerate(obs):
+						inputs_[i].append(block[0])
+				inputs_ = [np.array(inputs_[i]) for i in range(dim)]
 
-			outputs_ = np.vstack(outputs)
-			predicteds_ = np.vstack(predicteds)
-			rewards_ = np.vstack(rewards)
+				outputs_ = np.vstack(outputs)
+				predicteds_ = np.vstack(predicteds)
+				rewards_ = np.vstack(rewards)
 
-			discounted_rewards_ = self.discount_rewards(rewards_)
-			# TODO: 不做均值平移应该也可以
-		#	discounted_rewards_ -= np.mean(discounted_rewards_)
-			discounted_rewards_ /= np.std(discounted_rewards_)
+				discounted_rewards_ = self.discount_rewards(rewards_)
+				# TODO: 不做均值平移应该也可以
+			#	discounted_rewards_ -= np.mean(discounted_rewards_)
+				if np.std(discounted_rewards_) != 0.:
+					discounted_rewards_ /= np.std(discounted_rewards_)
 
-			#outputs_ *= discounted_rewards_
-			for i, r in enumerate(zip(rewards, discounted_rewards_)):
-				reward, discounted_reward = r
+				#outputs_ *= discounted_rewards_
+				for i, r in enumerate(zip(rewards, discounted_rewards_)):
+					reward, discounted_reward = r
 
-				if verbose > 1:
-#					print (outputs_[i],)
-					print (outputs_[i],)
+					if verbose > 1:
+#						print (outputs_[i],)
+						print (outputs_[i],)
+					
+					#outputs_[i] = 0.5 + (2 * outputs_[i] - 1) * discounted_reward
+					# 修正output, reward<0 亏钱，反转所有的output。
+					# 
+					if discounted_reward < 0:
+						outputs_[i] = 1 - outputs_[i]
+						outputs_[i] = outputs_[i] / sum(outputs_[i])
+
+					# softmax的log函数求导后的Gradient ?
+					outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * abs(discounted_reward)))
+
+					if verbose > 0:
+						print (predicteds_[i], outputs_[i], reward, discounted_reward)
+
+				print("fit model input.shape %s, output.shape %s" %( [inputs_[i].shape for i in range(len(inputs_))], [outputs_[i].shape for i in range(len(outputs_))]))
+				#print("input dim shape: ",range(len(inputs_)))
+				#for i in range(len(inputs_)):
+				#	for j in range(len(inputs_[i])):
+				#		print(i,j, len(inputs_[i][j]))
+				#print("input dim shape end")
 				
-				#outputs_[i] = 0.5 + (2 * outputs_[i] - 1) * discounted_reward
-				# 修正output, reward<0 亏钱，反转所有的output。
-				# 
-				if discounted_reward < 0:
-					outputs_[i] = 1 - outputs_[i]
-					outputs_[i] = outputs_[i] / sum(outputs_[i])
-
-				# softmax的log函数求导后的Gradient ?
-				outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * abs(discounted_reward)))
-
-				if verbose > 0:
-					print (predicteds_[i], outputs_[i], reward, discounted_reward)
-
-			model.fit(inputs_, outputs_, nb_epoch = 1, verbose = 0, shuffle = True)
-			model.save_weights(self.model_filename)
+				np.set_printoptions(linewidth=200, suppress=True)
+				print("currentTargetIndex:", env.currentTargetIndex)
+				print(inputs_)
+				model.fit(inputs_, outputs_, nb_epoch = 1, verbose = 0, shuffle = True)
+				model.save_weights(self.model_filename)
 
 if __name__ == "__main__":
 	import sys

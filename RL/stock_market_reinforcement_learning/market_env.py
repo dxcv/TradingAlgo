@@ -5,6 +5,7 @@ import math
 import gym
 from gym import spaces
 
+import csv
 
 def is_number(s):
 	try:
@@ -78,6 +79,11 @@ class MarketEnv(gym.Env):
 				f.close()
 			except Exception as e:
 				print (e)
+
+			# dump close
+			with open('env_data_processed.csv','w') as f:
+				w = csv.writer(f)
+				w.writerows(data.items())
 
 			#print(len(data.keys()))
 			if len(data.keys()) > scope:
@@ -237,4 +243,5 @@ class MarketEnv(gym.Env):
 		# 第二行是[subject, subjectVolume]
 		tmpState = [np.array(i) for i in tmpState]
 		self.state = tmpState
+
 
