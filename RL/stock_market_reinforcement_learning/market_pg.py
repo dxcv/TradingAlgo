@@ -19,7 +19,7 @@ class bcolors:
 
 class PolicyGradient:
 
-	def __init__(self, env, discount = 0.99, model_filename = None, history_filename = None, max_memory=200):
+	def __init__(self, env, discount = 0.99, model_filename = None, history_filename = None, max_memory=100):
 		self.env = env
 		self.discount = discount
 		self.model_filename = model_filename
@@ -112,7 +112,7 @@ class PolicyGradient:
 				rewards.append(float(reward))
 
 				# check memory for RNN model
-				if len(inputs[0]) > self.max_memory:
+				if len(inputs) > self.max_memory:
 					del inputs[0]
 					del outputs[0]
 					del predicteds[0]
@@ -175,11 +175,6 @@ class PolicyGradient:
 						print (predicteds_[i], outputs_[i], reward, discounted_reward)
 
 				print("fit model input.shape %s, output.shape %s" %( [inputs_[i].shape for i in range(len(inputs_))], outputs_.shape))
-				#print("input dim shape: ",range(len(inputs_)))
-				#for i in range(len(inputs_)):
-				#	for j in range(len(inputs_[i])):
-				#		print(i,j, len(inputs_[i][j]))
-				#print("input dim shape end")
 				
 				np.set_printoptions(linewidth=200, suppress=True)
 				print("currentTargetIndex:", env.currentTargetIndex)
