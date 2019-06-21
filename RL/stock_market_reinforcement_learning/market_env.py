@@ -39,6 +39,8 @@ class MarketEnv(gym.Env):
 		self.targetCodes = []
 		self.dataMap = {}
 
+		self.lastsum=0.
+
 #		for code in (target_codes + input_codes):
 		for code in (list(target_codes) + list(input_codes)):
 			fn = dir_path + "./" + code + ".csv"
@@ -95,6 +97,7 @@ class MarketEnv(gym.Env):
 
 		self.actions = [
 			"LONG",
+#			"HOLD",
 			"SHORT",
 		]
 
@@ -111,6 +114,12 @@ class MarketEnv(gym.Env):
 
 		self.reward = 0
 
+		# 如果一直LONG，或者一直SHORT，返回的reward会一直为0，导致梯度无法更新。
+		# 增加判断，在一直LONG或SHORT的时候，手中的position价值是否增加或者减少。
+		# 即，当前position的sum与上次的sum(lastsum)的差值
+		# 从而保证，每次step时，都可以更新梯度
+		self.actual_reward = 0
+
 		# 每次非LONG即SHORT
 		# 如果是SHORT,会一直是SHORT(boughts列表里的数全部小于0),
 		# 如果是LONG，应该一直是LONG(boughts列表里的数全部大于0)。
@@ -120,7 +129,7 @@ class MarketEnv(gym.Env):
 			# 之前是否持有SHORT position
 			if sum(self.boughts) < 0:
 				for b in self.boughts:
-					# b是负数，因为是SHORT，b应该小于-1，才有钱赚。然后在前面加负号，转成正值
+					# b是负数，因为是SHORT，b应该小于-1才有钱赚。然后在前面加负号，转成正值
 					self.reward += -(b + 1)
 				if self.cumulative_reward:
 					self.reward = self.reward / max(1, len(self.boughts))
@@ -130,6 +139,14 @@ class MarketEnv(gym.Env):
 					self.done = True
 
 				self.boughts = []
+				#更新实际盈亏
+				self.actual_reward = self.reward
+
+			# 之前也是LONG
+			if sum(self.boughts) > 0:
+				self.reward = sum(self.boughts) - self.lastsum
+				if self.cumulative_reward:
+					self.reward = self.reward / max(1, len(self.boughts))
 
 			# 买1个
 			self.boughts.append(1.0)
@@ -147,11 +164,27 @@ class MarketEnv(gym.Env):
 					self.done = True
 
 				self.boughts = []
+				#更新实际盈亏
+				self.actual_reward = self.reward
+
+			# 之前也是SHORT
+			if sum(self.boughts) < 0:
+				self.reward = (self.lastsum - sum(self.boughts))
+		 		#self.reward = min(self.lastsum - sum(self.boughts), - (sum(self.boughts) + len(self.boughts)))
+				if self.cumulative_reward:
+					self.reward = self.reward / max(1, len(self.boughts))
 
 			# 卖1个
 			self.boughts.append(-1.0)
 		else:
+#			if self.actions[action] == "HOLD":
+#				self.reward = sum(self.boughts) - self.lastsum
+#				if self.cumulative_reward:
+#					self.reward = self.reward / max(1, len(self.boughts))
+
 			pass
+
+		self.lastsum = sum(self.boughts)
 
 		# close定义为，C(t+1) - C(t) / C(t) = C(t+1)/C(t) - 1
 		# vari即为当前close值, 代入 cum 得到
@@ -184,8 +217,9 @@ class MarketEnv(gym.Env):
 				self.reward = self.reward / max(1, len(self.boughts))
 
 			self.boughts = []
+			self.actual_reward = self.reward
 
-		return self.state, self.reward, self.done, {"dt": self.targetDates[self.currentTargetIndex], "cum": self.cum, "code": self.targetCode}
+		return self.state, self.reward, self.actual_reward, self.done, {"dt": self.targetDates[self.currentTargetIndex], "cum": self.cum, "code": self.targetCode}
 
 	def _reset(self):
 		self.targetCode = self.targetCodes[int(random() * len(self.targetCodes))]
@@ -197,6 +231,7 @@ class MarketEnv(gym.Env):
 
 		self.done = False
 		self.reward = 0
+		self.actual_reward = 0
 
 		self.defineState()
 

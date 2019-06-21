@@ -32,7 +32,8 @@ class PolicyGradient:
 		self.model = MarketPolicyGradientModelBuilder(modelFilename).getModel()
 		sgd = SGD(lr = 0.1, decay = 1e-6, momentum = 0.9, nesterov = True)
 		# 利用rmsprop 
-		self.model.compile(loss='mse', optimizer='rmsprop')
+		#self.model.compile(loss='mse', optimizer='rmsprop')
+		self.model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 
 	# 更详细解释: https://blog.csdn.net/heyc861221/article/details/80132054
 	def discount_rewards(self, r):
@@ -106,8 +107,8 @@ class PolicyGradient:
 					y = [float(action)]
 					outputs.append(y)
 
-				observation, reward, game_over, info = self.env._step(action)
-				reward_sum += float(reward)
+				observation, reward, actual_reward, game_over, info = self.env._step(action)
+				reward_sum += float(actual_reward)
 
 				rewards.append(float(reward))
 
@@ -121,6 +122,7 @@ class PolicyGradient:
 
 				if verbose > 0:
 					if env.actions[action] == "LONG" or env.actions[action] == "SHORT":
+					#if env.actions[action] == "LONG" or env.actions[action] == "SHORT" or env.actions[action] == "HOLD":
 						color = bcolors.FAIL if env.actions[action] == "LONG" else bcolors.OKBLUE
 						print ("%s:\t%s\t%.2f\t%.2f\t" % (info["dt"], color + env.actions[action] + bcolors.ENDC, reward_sum, info["cum"]) + ("\t".join(["%s:%.2f" % (l, i) for l, i in zip(env.actions, aprob.tolist())])))
 					#write_iter.writerow("%s:\t%s\t%.2f\t%.2f\t" % (info["dt"], env.actions[action], reward_sum, info["cum"]) + ("\t".join(["%s:%.2f" % (l, i) for l, i in zip(env.actions, aprob.tolist())])))
@@ -149,7 +151,8 @@ class PolicyGradient:
 
 				discounted_rewards_ = self.discount_rewards(rewards_)
 				# TODO: 不做均值平移应该也可以
-			#	discounted_rewards_ -= np.mean(discounted_rewards_)
+				# 平移后，有可能会导致最小的负值变为正值。改变了正负号。
+				#discounted_rewards_ -= np.mean(discounted_rewards_)
 				if np.std(discounted_rewards_) != 0.:
 					discounted_rewards_ /= np.std(discounted_rewards_)
 
@@ -164,12 +167,15 @@ class PolicyGradient:
 					#outputs_[i] = 0.5 + (2 * outputs_[i] - 1) * discounted_reward
 					# 修正output, reward<0 亏钱，反转所有的output。
 					# 
-					if discounted_reward < 0:
-						outputs_[i] = 1 - outputs_[i]
-						outputs_[i] = outputs_[i] / sum(outputs_[i])
+					#if discounted_reward < 0:
+					#	outputs_[i] = 1 - outputs_[i]
+					#	outputs_[i] = outputs_[i] / sum(outputs_[i])
 
 					# softmax的log函数求导后的Gradient ?
-					outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * abs(discounted_reward)))
+					# http://vsooda.github.io/2017/03/14/softmax-logistic/
+					# 最终对于softmax层，其反向梯度仅仅是概率值减去label值。
+					#outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * abs(discounted_reward)))
+					outputs_[i] = np.minimum(1, np.maximum(0, predicteds_[i] + (outputs_[i] - predicteds_[i]) * discounted_reward))
 
 					if verbose > 0:
 						print (predicteds_[i], outputs_[i], reward, discounted_reward)
@@ -201,7 +207,7 @@ if __name__ == "__main__":
 	f.close()
 
 #	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
-	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1514764800", end_date = "1560828600", sudden_death = -1.0)
+	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1514764800", end_date = "1560828600", sudden_death = -1.0, cumulative_reward = True)
 
-	pg = PolicyGradient(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename)
+	pg = PolicyGradient(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename, max_memory=50)
 	pg.train(verbose = 1)

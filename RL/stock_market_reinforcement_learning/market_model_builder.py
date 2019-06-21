@@ -49,6 +49,7 @@ class MarketPolicyGradientModelBuilder(AbstractModelBuilder):
 		m = Dense(256)(m)
 		m = LeakyReLU(0.001)(m)
 		V = Dense(2, activation = 'softmax')(m)
+		#V = Dense(3, activation = 'softmax')(m)
 		model = Model(input = inputs, output = V)
 
 		return model
