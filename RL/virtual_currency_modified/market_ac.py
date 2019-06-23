@@ -1,12 +1,15 @@
 import os
 import numpy as np
 
-from policy_gradient import PolicyGradient
+from actor_critic import Actor, Critic 
 from market_env import MarketEnv
 from market_model_builder import MarketPolicyGradientModelBuilder
 
 import csv
 import numpy as np 
+
+import tensorflow as tf
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -18,7 +21,7 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-class PolicyGradient_run:
+class AC_run:
 
 	def __init__(self, env, discount = 0.99, model_filename = None, history_filename = None, max_memory=100):
 		self.env = env
@@ -53,17 +56,23 @@ class PolicyGradient_run:
 
 			print(observation[0].shape, observation[1].shape)
 
-			RL = PolicyGradient(
-				n_actions=self.env.action_space.n,
-#				n_features=observation.shape[0],
-				learning_rate=0.02,
-				reward_decay=0.995,
-				# output_graph=True,
-			)
+
+			sess = tf.Session()
+
+			actor = Actor(sess, 
+                n_actions=self.env.action_space.n
+                # output_graph=True,
+            )
+
+			critic = Critic(sess, 
+				n_actions=self.env.action_space.n
+				)     # we need a good teacher, so the teacher should learn faster than the actor
+
+			sess.run(tf.global_variables_initializer())
 
 			while not game_over:
 
-				action, aprob = RL.choose_action(observation)
+				action, aprob = actor.choose_action(observation)
 
 				inputs.append(observation)
 				predicteds.append(aprob)
@@ -72,13 +81,15 @@ class PolicyGradient_run:
 				y[action] = 1.
 				outputs.append(y)
 
-				observation, reward, actual_reward, game_over, info = self.env._step(action)
+				observation_, reward, actual_reward, game_over, info = self.env._step(action)
 				reward_sum += float(actual_reward)
 
 				#rewards.append(float(reward))
 				rewards.append(float(reward_sum))
 	
-				RL.store_transition(observation, action, rewards)
+				# After env.step
+				td_error = critic.learn(observation, reward_sum, observation_)  # gradient = grad[r + gamma * V(s_) - V(s)]
+				actor.learn(observation, action, td_error)     # true_gradient = grad[logPi(s,a) * td_error]
 
 				# check memory for RNN model
 				if len(inputs) > self.max_memory:
@@ -105,7 +116,6 @@ class PolicyGradient_run:
 					os.system("echo %s >> %s" % (toPrint, self.history_filename))
 
 
-				discounted_rewards_ = RL.learn()  # train
 
 				dim = len(inputs[0])
 				inputs_ = [[] for i in range(dim)]
@@ -118,18 +128,7 @@ class PolicyGradient_run:
 				predicteds_ = np.vstack(predicteds)
 				rewards_ = np.vstack(rewards)
 
-				print("shape: ", np.shape(rewards), np.shape(discounted_rewards_))
-				#outputs_ *= discounted_rewards_
-				for i, r in enumerate(zip(rewards, discounted_rewards_)):
-					reward, discounted_reward = r
-
-					if verbose > 1:
-#						print (outputs_[i],)
-						print (outputs_[i],)
-					
-
-					if verbose > 0:
-						print (predicteds_[i], outputs_[i], reward, discounted_reward)
+				print("shape: ", np.shape(rewards))
 
 				print("fit model input.shape %s, output.shape %s" %( [inputs_[i].shape for i in range(len(inputs_))], outputs_.shape))
 				
@@ -157,5 +156,5 @@ if __name__ == "__main__":
 #	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
 	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1514764800", end_date = "1560828600", sudden_death = -1.0, cumulative_reward = True)
 
-	pg = PolicyGradient_run(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename, max_memory=60)
+	pg = AC_run(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename, max_memory=60)
 	pg.train(verbose = 1, max_episode=1)
