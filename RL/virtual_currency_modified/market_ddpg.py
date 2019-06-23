@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from actor_critic import Actor, Critic 
+from DDPG import DDPG 
 from market_env import MarketEnv
 from market_model_builder import MarketPolicyGradientModelBuilder
 
@@ -21,7 +21,7 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-class AC_run:
+class DDPG_run:
 
 	def __init__(self, env, discount = 0.99, model_filename = None, history_filename = None, max_memory=100):
 		self.env = env
@@ -157,5 +157,5 @@ if __name__ == "__main__":
 #	env = MarketEnv(dir_path = "./data/", target_codes = codeMap.keys(), input_codes = [], start_date = "2010-08-25", end_date = "2015-08-25", sudden_death = -1.0)
 	env = MarketEnv(dir_path = "../../dataset/", target_codes = codeMap.keys(), input_codes = [], start_date = "1514764800", end_date = "1560828600", sudden_death = -1.0, cumulative_reward = True)
 
-	pg = AC_run(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename, max_memory=60)
+	pg = DDPG_run(env, discount = 0.9, model_filename = modelFilename, history_filename = historyFilename, max_memory=60)
 	pg.train(verbose = 1, max_episode=1)
