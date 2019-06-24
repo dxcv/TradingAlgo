@@ -49,7 +49,7 @@ class PG():
             print ("Could not find old network weights")
 
         global summary_writer
-        summary_writer = tf.train.SummaryWriter('logs',graph=self.session.graph)
+        summary_writer = tf.summary.FileWriter('logs',graph=self.session.graph)
 
     def create_pg_network(self, data_dictionary):
         # network weights
@@ -71,11 +71,11 @@ class PG():
         #this needs to be updated to use softmax
         #P_action = tf.reduce_sum(self.PG_value,reduction_indices = 1)
         #self.cost = tf.reduce_mean(tf.square(self.y_input - P_action))
-        self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.PG_value, self.y_input))
+        self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.PG_value, labels=self.y_input))
         #self.cost = tf.reduce_mean(-tf.reduce_sum(self.y_input * tf.log(self.PG_value), reduction_indices=[1]))
-        tf.scalar_summary("loss",self.cost)
+        tf.summary.scalar("loss",self.cost)
         global merged_summary_op
-        merged_summary_op = tf.merge_all_summaries()
+        merged_summary_op = tf.summary.merge_all()
         self.optimizer = tf.train.AdamOptimizer(LEARNING_RATE).minimize(self.cost)
 
     def create_supervised_accuracy(self):
@@ -153,7 +153,7 @@ class PG():
     def discounted_rewards(self,rewards):
         reward_discounted = np.zeros_like(rewards)
         track = 0
-        for index in reversed(xrange(len(rewards))):
+        for index in reversed(range(len(rewards))):
             track = track * GAMMA + rewards[index]
             reward_discounted[index] = track
         return reward_discounted
@@ -161,6 +161,7 @@ class PG():
 
 # ---------------------------------------------------------
 EPISODE = 10000 # Episode limitation
+# if episode num is changed, need to change this also
 STEP = 9 # Step limitation in an episode
 TEST = 10 # The number of experiment test every 100 episode
 ITERATION = 20
@@ -175,17 +176,17 @@ def main():
     #supervised learning first
     supervised_seeding(agent, data_dictionary)
 
-    for iter in xrange(ITERATION):
+    for iter in range(ITERATION):
         print(iter)
         # initialize tase
         # Train 
         data = data_dictionary["x_train"]
-        for episode in xrange(len(data)):
+        for episode in range(len(data)):
             episode_data = data[episode]
             state_list, reward_list, grad_list = [],[],[]
             portfolio = 0
             portfolio_value = 0
-            for step in xrange(STEP):
+            for step in range(STEP):
                 state, action, next_state, reward, done, portfolio, portfolio_value, grad = env_stage_data(agent, step, episode_data, portfolio, portfolio_value, True)
                 state_list.append(state)
                 grad_list.append(grad)
@@ -194,7 +195,8 @@ def main():
                     epr = np.vstack(reward_list)
                     discounted_epr = agent.discounted_rewards(epr)
                     discounted_epr -= np.mean(discounted_epr)
-                    discounted_epr /= np.std(discounted_epr)
+                    if np.std(discounted_epr) != 0:
+                        discounted_epr /= np.std(discounted_epr)
                     epdlogp = np.vstack(grad_list)
                     agent.perceive(state_list, epdlogp)
                     if episode % BATCH_SIZE == 0 and episode > 1:
@@ -202,8 +204,8 @@ def main():
                     break
             if episode % 100  == 0 and episode > 1:
                 total_reward = 0
-                for i in xrange(10):
-                    for step in xrange(STEP):
+                for i in range(10):
+                    for step in range(STEP):
                         state, action, next_state, reward, done, portfolio, portfolio_value, grad = env_stage_data(agent, step, episode_data, portfolio, portfolio_value, True)
                         #pdb.set_trace();
                         total_reward += reward
@@ -214,7 +216,7 @@ def main():
         #on test data
         data = data_dictionary["x_test"]
         iteration_reward = []
-        for episode in xrange(len(data)):
+        for episode in range(len(data)):
             episode_data = data[episode]
             portfolio = 0
             portfolio_list = []
@@ -223,7 +225,7 @@ def main():
             reward_list = []
             total_reward = 0
             action_list = []
-            for step in xrange(STEP):
+            for step in range(STEP):
                 state, action, next_state, reward, done, portfolio, portfolio_value, grad = env_stage_data(agent, step, episode_data, portfolio, portfolio_value, False)
                 action_list.append(action)
                 portfolio_list.append(portfolio)
@@ -238,22 +240,22 @@ def main():
         avg_reward = sum(iteration_reward) # / float(len(iteration_reward))
         print(avg_reward)
         test_rewards[iter] = [iteration_reward, avg_reward]
-    for key, value in test_rewards.iteritems():
+    for key, value in test_rewards.items():
         print(value[0])
-    for key, value in test_rewards.iteritems():
+    for key, value in test_rewards.items():
         print(key)
         print(value[1])
 
 
 def supervised_seeding(agent, data_dictionary):
-    for iter in xrange(ITERATION):
+    for iter in range(ITERATION):
         print("Iteration:")
         print(iter)
         iteration_accuracy = []
         train_iteration_accuracy = []
         data = data_dictionary["x_train"]
         y_label_data = data_dictionary["y_train"]
-        for episode in xrange(len(data)):
+        for episode in range(len(data)):
             state_batch, y_batch = make_supervised_input_vector(episode, data, y_label_data)
             #print(episode)
             agent.train_supervised(state_batch, y_batch)
@@ -265,7 +267,7 @@ def supervised_seeding(agent, data_dictionary):
 
         data = data_dictionary["x_test"]
         y_label_data = data_dictionary["y_test"]
-        for episode in xrange(len(data)):
+        for episode in range(len(data)):
             #pdb.set_trace();
             state_batch, y_batch = make_supervised_input_vector(episode, data, y_label_data)
             accuracy = agent.supervised_accuracy(state_batch, y_batch)

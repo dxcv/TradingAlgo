@@ -6,18 +6,19 @@ import six
 from six.moves.urllib import request
 
 from numpy import genfromtxt
-#from sklearn.cross_validation import train_test_split
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import numpy as np
 import dateutil.parser
 import pdb
 import glob
+#import cPickle as pickle
 import pickle
 import shelve
 import six
 import episodic_data
 from six.moves.urllib import request
+import logging
 
 data = episodic_data.load_data("data.pkl",episode=10)
 data_dict = episodic_data.load_file_data("data_dict.pkl")
@@ -29,6 +30,7 @@ action_map = {0: "Hold", 1: "Buy", 2: "Sell"}
 def get_intial_data():
     data_dictionary = {}
     data_dictionary["input"] = len(x_train[0][0]) + 1 #here one is portfolio value
+    print("get_initial_data", x_train[0][0])
     data_dictionary["action"] = 3 #short, buy and hold
     data_dictionary["hidden_layer_1_size"] = 40
     data_dictionary["hidden_layer_2_size"] = 20 #will be using later

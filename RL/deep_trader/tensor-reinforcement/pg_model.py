@@ -54,12 +54,12 @@ class PG():
         checkpoint = tf.train.get_checkpoint_state("saved_networks")
         if checkpoint and checkpoint.model_checkpoint_path:
             self.saver.restore(self.session, checkpoint.model_checkpoint_path)
-            print "Successfully loaded:", checkpoint.model_checkpoint_path
+            print ("Successfully loaded:", checkpoint.model_checkpoint_path)
         else:
-            print "Could not find old network weights"
+            print ("Could not find old network weights")
 
         global summary_writer
-        summary_writer = tf.train.SummaryWriter('logs',graph=self.session.graph)
+        summary_writer = tf.summary.FileWriter('logs',graph=self.session.graph)
 
     def create_pg_network(self, weights, biases):
         # network weights
@@ -76,9 +76,10 @@ class PG():
         #self.cost = tf.reduce_mean(tf.square(self.y_input - P_action))
         #self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.PG_value, self.y_input))
         self.cost = tf.reduce_mean(-tf.reduce_sum(self.y_input * tf.log(self.PG_value), reduction_indices=[1]))
-        tf.scalar_summary("loss",self.cost)
+#        tf.scalar_summary("loss",self.cost)
+        tf.summary.scalar("loss",self.cost)
         global merged_summary_op
-        merged_summary_op = tf.merge_all_summaries()
+        merged_summary_op = tf.summary.merge_all()
         self.optimizer = tf.train.AdamOptimizer(LEARNING_RATE).minimize(self.cost)
 
     def perceive(self,states,epd):
@@ -122,7 +123,7 @@ class PG():
     def discounted_rewards(self,rewards):
         reward_discounted = np.zeros_like(rewards)
         track = 0
-        for index in reversed(xrange(len(rewards))):
+        for index in reversed(range(len(rewards))):
             track = track * GAMMA + rewards[index]
             reward_discounted[index] = track
         return reward_discounted
@@ -172,9 +173,9 @@ def main():
             #test every 100 rewards
             if episode_number % 100 == 0 and episode_number >= 100:
                 total_reward = 0
-                for i in xrange(TEST):
+                for i in range(TEST):
                     state = env.reset()
-                    for j in xrange(STEP):
+                    for j in range(STEP):
                         #env.render()
                         grad, action = agent.policy_forward(state) # direct action for test
                         state,reward,done,_ = env.step(action)
@@ -182,7 +183,7 @@ def main():
                         if done:
                             break
                 ave_reward = total_reward/TEST
-                print 'episode: ',episode_number,'Evaluation Average Reward:',ave_reward
+                print ('episode: ',episode_number,'Evaluation Average Reward:',ave_reward)
                 state = env.reset()
 
 if __name__ == '__main__':
