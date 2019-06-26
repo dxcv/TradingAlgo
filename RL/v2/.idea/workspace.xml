@@ -4,6 +4,8 @@
     <list default="true" id="b1e6cea6-3225-4e3a-91f2-4a51894ff76f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/episodic_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/episodic_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/pg_stock_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/pg_stock_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pg_stock_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/pg_stock_model.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,7 +19,7 @@
         <entry file="file://$PROJECT_DIR$/pg_stock_model.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
+              <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -150,6 +152,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="2061" y="52" width="1695" height="1106" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24955116" />
@@ -181,7 +184,7 @@
     <entry file="file://$PROJECT_DIR$/pg_stock_model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
+          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
         </state>
       </provider>
     </entry>

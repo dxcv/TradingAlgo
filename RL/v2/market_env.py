@@ -109,6 +109,10 @@ class MarketEnv(gym.Env):
 				## TODO: HARD CODED !!!
 				data[k] = (v[0]/mean_high, v[1]/mean_low, v[2]/mean_close, v[3]/mean_volume)
 
+			with open("en_data.txt", "w") as txtFile:
+				for line in data:
+					txtFile.write(line + "\n")
+
 			#print(len(data.keys()))
 			if len(data.keys()) > scope:
 				self.dataMap[code] = data
@@ -319,8 +323,9 @@ class MarketEnv(gym.Env):
 					self.target[self.targetDates[self.currentTargetIndex]][3]])
 				self.currentTargetIndex += 1
 			except Exception as e:
-				print (self.targetCode, self.currentTargetIndex, i, len(self.targetDates))
+				print ("no more data", self.targetCode, self.currentTargetIndex, i, len(self.targetDates))
 				self.done = True
+				break
 
-		print("data",self.currentTargetIndex,"/" ,len(self.target))
+		#print("data",self.currentTargetIndex,"/" ,len(self.target))
 		return episode_data, self.done

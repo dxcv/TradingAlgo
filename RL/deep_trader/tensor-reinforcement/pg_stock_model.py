@@ -191,6 +191,7 @@ def main():
                 state_list.append(state)
                 grad_list.append(grad)
                 reward_list.append(reward)
+                # done 为每个episode结束后，重新计算discount_rewards
                 if done:
                     epr = np.vstack(reward_list)
                     discounted_epr = agent.discounted_rewards(epr)
@@ -202,6 +203,7 @@ def main():
                     if episode % BATCH_SIZE == 0 and episode > 1:
                         agent.train_pg_network()
                     break
+            #每个一段时间，评估当前模型
             if episode % 100  == 0 and episode > 1:
                 total_reward = 0
                 for i in range(10):
@@ -301,7 +303,7 @@ def make_supervised_input_vector(episode, data, y_label_data):
 
 
 
-
+# 把choose_action()跟 step()放在一个函数里
 def env_stage_data(agent, step, episode_data, portfolio, portfolio_value, train):
     state = episode_data[step] + [portfolio]
     if train:

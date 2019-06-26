@@ -110,6 +110,8 @@ def episode_supervised_data(data, data_dict):
     prices = []
     for iteration in data:
         prices.append(data_average_price(data_dict, iteration))
+
+    # 返回[action, portfilio]的list
     actions = generate_actions_from_price_data(prices)
     return actions
 
