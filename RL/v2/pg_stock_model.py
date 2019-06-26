@@ -228,7 +228,7 @@ def main(env):
         for i in range(100):
             episode_data, no_data = env.step_episode_data(STEPS)
             episode_data_list.append(episode_data)
-        # supervised_seeding_online(agent, episode_data_list)
+        #supervised_seeding_online(agent, episode_data_list)
 
 
         episode_data, no_data = env.step_episode_data(STEPS)
@@ -249,13 +249,14 @@ def main(env):
                     # 重新计算discount_rewards
                     epr = np.vstack(reward_list)
                     discounted_epr = agent.discounted_rewards(epr)
+                    discounted_epr = np.array(discounted_epr, dtype=np.float64)
                     discounted_epr -= float(np.mean(discounted_epr))
                     if np.std(discounted_epr) != 0.:
                         discounted_epr /= np.std(discounted_epr)
                     epdlogp = np.vstack(grad_list)
                     agent.perceive(state_list, epdlogp, discounted_epr)
                     # 每个step都更新一次
-                    agent.train_pg_network_episode()
+                    #agent.train_pg_network_episode()
                     # 重新计算pg的网络 by resample, 取消样本之间相关性
                     if episode % BATCH_SIZE == 0 and episode > 1:
                         agent.train_pg_network()
