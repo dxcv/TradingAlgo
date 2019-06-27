@@ -257,9 +257,12 @@ def main(env):
                     epr = np.vstack(reward_list)
                     discounted_epr = agent.discounted_rewards(epr)
                     discounted_epr = np.array(discounted_epr, dtype=np.float64)
-                    discounted_epr -= float(np.mean(discounted_epr))
+                    # 保留负值, 否则, 惩罚的负值，会因为“-mean()”的操作，转化为激励的正值
+					#discounted_epr -= float(np.mean(discounted_epr))
                     if np.std(discounted_epr) != 0.:
                         discounted_epr /= np.std(discounted_epr)
+                    print("counted rewards", epr)
+                    print("discounted rewards", discounted_epr)
                     epdlogp = np.vstack(grad_list)
                     agent.perceive(state_list, epdlogp, discounted_epr)
                     # 每个step都更新一次
