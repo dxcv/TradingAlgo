@@ -3,7 +3,7 @@
 #-----------------------------
 
 import gym
-import tensorflow as tf 
+import tensorflow as tf
 import numpy as np 
 import random
 from collections import deque
@@ -76,7 +76,7 @@ class PG():
         #P_action = tf.reduce_sum(self.PG_value,reduction_indices = 1)
         #self.cost = tf.reduce_mean(tf.square(self.y_input - P_action))
         #self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.PG_value, labels=self.y_input))
-        print("create_training_method",self.PG_value, self.y_input, self.tf_vt)
+        tf.print("create_training_method",self.PG_value, self.y_input, self.tf_vt)
         neg_log_prob = tf.nn.softmax_cross_entropy_with_logits(logits=self.PG_value, labels=self.y_input)
         self.cost = tf.reduce_mean(neg_log_prob * self.tf_vt)
         #self.cost = tf.reduce_mean(-tf.reduce_sum(self.y_input * tf.log(self.PG_value), reduction_indices=[1]))
@@ -201,7 +201,7 @@ EPISODE = 10000 # Episode limitation
 STEPS = 10 # 1个episode里面的数据量
 STEP = 9 # Step limitation in an episode, = STEPS - 1
 TEST = 10 # The number of experiment test every 100 episode
-SUPERVISED_ITERATION = 10
+SUPERVISED_ITERATION = 20
 ITERATION = 10
 
 def main(env):
@@ -237,14 +237,14 @@ def main(env):
             episode_data_list.append(episode_data)
         supervised_seeding_online(agent, episode_data_list)
 
+        portfolio = 0
+        portfolio_value = 0
 
         episode_data, no_data = env.step_episode_data(STEPS)
         while no_data == False:
 
             state_list, reward_list, grad_list = [],[],[]
             action_list = []
-            portfolio = 0
-            portfolio_value = 0
             for step in range(STEP):
                 state, action, next_state, reward, done, portfolio, portfolio_value, grad = env_stage_data(agent, step, episode_data, portfolio, portfolio_value, True)
                 state_list.append(state)
@@ -331,7 +331,7 @@ def main(env):
 
 
 def supervised_seeding(agent, data_dictionary):
-    for iter in range(SUPERVISED_ITERATION):
+    for iter in range(ITERATION):
         print("Iteration:")
         print(iter)
         iteration_accuracy = []
@@ -374,7 +374,7 @@ def make_supervised_data_online(data):
 
 
 def supervised_seeding_online(agent, data):
-    for iter in range(ITERATION):
+    for iter in range(SUPERVISED_ITERATION):
         print("Iteration:")
         print(iter)
         iteration_accuracy = []

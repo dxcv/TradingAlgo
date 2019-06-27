@@ -77,6 +77,7 @@ def new_stage_data(action, portfolio, old_state, new_state, portfolio_value, don
         portfolio -= 1
     elif action == 0:
         portfolio = portfolio
+		
     #reward = 0
     #if new_state:
     new_state = new_state + [portfolio]
@@ -86,12 +87,17 @@ def new_stage_data(action, portfolio, old_state, new_state, portfolio_value, don
         #low_price = new_state[1]
     #reward system might need to change and require some good thinking
     #if done:
+    '''
     reward = portfolio_value - old_portfolio_value
-    if action == 2:
+    if action == 1:
         reward = 0. - reward
+    '''
+    reward = (portfolio_value + portfolio * next_price)
+    if action == 0:
+        reward = portfolio * (next_price - price)
 
-    print("new_stage_data" , portfolio,old_portfolio_value, portfolio_value, reward, next_price)
-#    reward = (portfolio_value + portfolio * next_price)
+    print("new_stage_data" , action, price, next_price, portfolio, reward)
+    print("new_stage_data" , portfolio, old_portfolio_value, portfolio_value, reward, next_price)
     #if reward > 0:
     #    reward = 2*reward #increasing reward
     #pdb.set_trace();
