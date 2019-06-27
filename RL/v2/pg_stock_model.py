@@ -96,7 +96,7 @@ class PG():
         self.replay_buffer += temp
 
     def train_pg_network_episode(self):
-        minibatch = self.replay_buffer[:-10]
+        minibatch = self.replay_buffer[-9:]
         state_batch = [data[0] for data in minibatch]
         y_batch = [data[1] for data in minibatch]
         discounted_rewards = [data[2] for data in minibatch]
@@ -111,9 +111,9 @@ class PG():
             self.tf_vt: discounted_rewards
             })
         summary_writer.add_summary(summary_str,self.time_step)
-        self.replay_buffer = []
 
     def train_pg_network(self):
+        print(np.shape(self.replay_buffer))
         minibatch = random.sample(self.replay_buffer,BATCH_SIZE*5)
         state_batch = [data[0] for data in minibatch]
         y_batch = [data[1] for data in minibatch]
@@ -201,7 +201,8 @@ EPISODE = 10000 # Episode limitation
 STEPS = 10 # 1个episode里面的数据量
 STEP = 9 # Step limitation in an episode, = STEPS - 1
 TEST = 10 # The number of experiment test every 100 episode
-ITERATION = 1
+SUPERVISED_ITERATION = 10
+ITERATION = 10
 
 def main(env):
     # initialize OpenAI Gym env and dqn agent
@@ -262,9 +263,10 @@ def main(env):
                     epdlogp = np.vstack(grad_list)
                     agent.perceive(state_list, epdlogp, discounted_epr)
                     # 每个step都更新一次
-                    #agent.train_pg_network_episode()
+                    agent.train_pg_network_episode()
                     # 重新计算pg的网络 by resample, 取消样本之间相关性
                     if episode % BATCH_SIZE == 0 and episode > 1:
+                        print("steve", episode, BATCH_SIZE)
                         agent.train_pg_network()
                     break
 
@@ -329,7 +331,7 @@ def main(env):
 
 
 def supervised_seeding(agent, data_dictionary):
-    for iter in range(ITERATION):
+    for iter in range(SUPERVISED_ITERATION):
         print("Iteration:")
         print(iter)
         iteration_accuracy = []
