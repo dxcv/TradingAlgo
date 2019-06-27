@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b1e6cea6-3225-4e3a-91f2-4a51894ff76f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/episodic_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/episodic_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/pg_stock_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/pg_stock_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pg_stock_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/pg_stock_model.py" afterDir="false" />
-    </list>
+    <list default="true" id="b1e6cea6-3225-4e3a-91f2-4a51894ff76f" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,10 +34,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2061" />
-    <option name="y" value="52" />
-    <option name="width" value="1695" />
-    <option name="height" value="1106" />
+    <option name="x" value="2003" />
+    <option name="y" value="54" />
+    <option name="width" value="1764" />
+    <option name="height" value="1098" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -151,7 +146,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2061" y="52" width="1695" height="1106" extended-state="0" />
+    <frame x="2039" y="38" width="1695" height="1106" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />

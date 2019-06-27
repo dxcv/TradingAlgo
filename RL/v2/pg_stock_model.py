@@ -137,10 +137,16 @@ class PG():
     
     def train_supervised(self, state_batch, y_batch):
         #pdb.set_trace()
-        self.optimizer.run(feed_dict={self.y_input:y_batch,self.state_input:state_batch})
+        dummy_rewards = np.ones(len(state_batch), dtype=np.float)
+        dummy_rewards = [[i] for i in dummy_rewards]
+        self.optimizer.run(feed_dict={self.y_input:y_batch,
+            self.state_input:state_batch,
+            self.tf_vt: dummy_rewards
+			})
         self.time_step += 1
         summary_str = self.session.run(merged_summary_op,feed_dict={
             self.y_input:y_batch,
+            self.tf_vt: dummy_rewards,
             self.state_input:state_batch
             })
         summary_writer.add_summary(summary_str,self.time_step)
@@ -228,7 +234,7 @@ def main(env):
         for i in range(100):
             episode_data, no_data = env.step_episode_data(STEPS)
             episode_data_list.append(episode_data)
-        #supervised_seeding_online(agent, episode_data_list)
+        supervised_seeding_online(agent, episode_data_list)
 
 
         episode_data, no_data = env.step_episode_data(STEPS)
