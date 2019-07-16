@@ -1,0 +1,107 @@
+WARNING:tensorflow:From /home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+*--------------------Training Status-------------------*
+Date from 2015-07-01  to  2019-06-30
+Features: ['close', 'high']
+Agent:Noise( False )---Recoed( False )---Plot( False )
+Market Type: coin
+Predictor: CNN   Framework: PG   Window_length: 10
+Epochs: 100
+Trainable: True
+Reloaded Model: False
+Method model_free
+Noise_flag False
+Record_flag False
+Plot_flag False
+['XRP', 'ETH']
+         date code        high  ...       volume    quoteVolume weightedAverage
+0  1439010600  ETH          50  ...  10.65496054  1033.26076055      0.01031197
+1  1439010900  ETH  0.00900002  ...   1.54996959   172.21873945           0.009
+2  1439011200  ETH  0.00901001  ...   1.12615562       124.9895         0.00901
+3  1439011500  ETH  0.00901002  ...  20.60093553           3003      0.00686011
+4  1439011800  ETH  0.01279996  ...   2.44737213   436.71889907      0.00560399
+
+[5 rows x 9 columns]
+           code        high  ...    quoteVolume weightedAverage
+date                         ...                               
+2015-08-08  ETH          50  ...  1033.26076055      0.01031197
+2015-08-08  ETH  0.00900002  ...   172.21873945           0.009
+2015-08-08  ETH  0.00901001  ...       124.9895         0.00901
+2015-08-08  ETH  0.00901002  ...           3003      0.00686011
+2015-08-08  ETH  0.01279996  ...   436.71889907      0.00560399
+
+[5 rows x 8 columns]
+2
+27082 368337
+length of date_set before is  95 . codes is  ['reversed_USDC', 'XEM']
+-> length of date_set after is  95 reversed_USDC
+-> length of date_set after is  95 XEM
+104833 27082
+length of date_set before is  365 . codes is  ['STR', 'reversed_USDC']
+-> length of date_set after is  365 STR
+-> length of date_set after is  95 reversed_USDC
+368334 104833
+length of date_set before is  1280 . codes is  ['reversed_USDT', 'STR']
+-> length of date_set after is  1280 reversed_USDT
+-> length of date_set after is  365 STR
+104833 368352
+length of date_set before is  365 . codes is  ['STR', 'XMR']
+-> length of date_set after is  365 STR
+-> length of date_set after is  365 XMR
+368334 357239
+length of date_set before is  1280 . codes is  ['reversed_USDT', 'ETH']
+-> length of date_set after is  1280 reversed_USDT
+-> length of date_set after is  1241 ETH
+         date code        high  ...       volume    quoteVolume weightedAverage
+0  1439010600  ETH          50  ...  10.65496054  1033.26076055      0.01031197
+1  1439010900  ETH  0.00900002  ...   1.54996959   172.21873945           0.009
+2  1439011200  ETH  0.00901001  ...   1.12615562       124.9895         0.00901
+3  1439011500  ETH  0.00901002  ...  20.60093553           3003      0.00686011
+4  1439011800  ETH  0.01279996  ...   2.44737213   436.71889907      0.00560399
+
+[5 rows x 9 columns]
+           code        high  ...    quoteVolume weightedAverage
+date                         ...                               
+2015-08-08  ETH          50  ...  1033.26076055      0.01031197
+2015-08-08  ETH  0.00900002  ...   172.21873945           0.009
+2015-08-08  ETH  0.00901001  ...       124.9895         0.00901
+2015-08-08  ETH  0.00901002  ...           3003      0.00686011
+2015-08-08  ETH  0.01279996  ...   436.71889907      0.00560399
+
+[5 rows x 8 columns]
+data            code      high  ...    quoteVolume weightedAverage
+date                       ...                               
+2015-08-08  ETH  50.00000  ...  1033.26076055      0.01031197
+2015-08-08  ETH   0.00900  ...   172.21873945           0.009
+2015-08-08  ETH   0.00901  ...       124.9895         0.00901
+2015-08-08  ETH   0.00901  ...           3003      0.00686011
+2015-08-08  ETH   0.01280  ...   436.71889907      0.00560399
+
+[5 rows x 8 columns]
+Traceback (most recent call last):
+  File "main.py", line 319, in <module>
+    main()
+  File "main.py", line 316, in main
+    session(config,args)
+  File "main.py", line 249, in session
+    env.get_data(train_start_date, train_end_date, features, window_length, market, codes)
+  File "/home/AD/xiaosheng.xu/work/Algo/TradingAlgo/RL/Reinforcement-learning-in-portfolio-management-/data/environment.py", line 102, in get_data
+    asset_data=data[data["code"]==asset].reindex(self.date_set).sort_index()#加入时间的并集，会产生缺失值pd.to_datetime(self.date_list)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/util/_decorators.py", line 197, in wrapper
+    return func(*args, **kwargs)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/frame.py", line 3809, in reindex
+    return super(DataFrame, self).reindex(**kwargs)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/generic.py", line 4356, in reindex
+    fill_value, copy).__finalize__(self)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/frame.py", line 3741, in _reindex_axes
+    fill_value, limit, tolerance)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/frame.py", line 3752, in _reindex_index
+    allow_dups=False)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/generic.py", line 4490, in _reindex_with_indexers
+    copy=copy)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/internals/managers.py", line 1224, in reindex_indexer
+    self.axes[axis]._can_reindex(indexer)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 3087, in _can_reindex
+    raise ValueError("cannot reindex from a duplicate axis")
+ValueError: cannot reindex from a duplicate axis

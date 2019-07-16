@@ -43,7 +43,7 @@ def build_parser():
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     parser = build_parser()
     options = parser.parse_args()
     if not os.path.exists("./" + "train_package"):
