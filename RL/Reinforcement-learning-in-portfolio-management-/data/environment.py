@@ -99,12 +99,15 @@ class Environment:
         self.M=len(codes)+1
         self.N=len(features)
         self.L=int(window_length)
-        self.date_set=pd.date_range(start_time,end_time)
+        # STEVE TODO: change freq according to data !
+        self.date_set=pd.date_range(start_time,end_time, freq='15T')
         #为每一个资产生成数据
         asset_dict=dict()#每一个资产的数据
         for asset in codes:
             asset_data=data[data["code"]==asset].reindex(self.date_set).sort_index()#加入时间的并集，会产生缺失值pd.to_datetime(self.date_list)
-            asset_data=asset_data.resample('D').mean()
+            # STEVE TODO: change freq according to data !
+            #asset_data=asset_data.resample('D').mean()
+            asset_data = asset_data.resample('15T').mean()
             asset_data['close']=asset_data['close'].fillna(method='pad')
             base_price = asset_data.ix[-1, 'close']
             asset_dict[str(asset)]= asset_data
