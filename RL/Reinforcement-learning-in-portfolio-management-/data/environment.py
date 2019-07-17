@@ -18,7 +18,8 @@ def fill_zeros(x):
 
 def utcToDate(x):
     x = int(x)
-    return datetime.utcfromtimestamp(x).strftime('%Y-%m-%d')
+    #return datetime.utcfromtimestamp(x).strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.fromtimestamp(x)
 
 class Environment:
     def __init__(self):
@@ -35,7 +36,7 @@ class Environment:
 
         print(self.data.head())
         self.data["date"] = self.data["date"].apply(utcToDate)
-        self.data['date'] = pd.to_datetime(self.data['date'], format="%Y-%m-%d")
+        #self.data['date'] = pd.to_datetime(self.data['date'], format="%Y-%m-%d")
         self.data.set_index('date', inplace=True)
         print(self.data.head())
 
@@ -58,7 +59,10 @@ class Environment:
             if len(date_set)>1200:
                 sample_flag=False
 
-        date_set=date_set.intersection(set(pd.date_range(start_date,end_date)))
+        # STEVE TODO: change freq according to data
+        print("get_repo",start_date, end_date)
+        tmp = set(pd.date_range(start_date, end_date, freq='15T'))
+        date_set=date_set.intersection(tmp)
         self.date_set = list(date_set)
         self.date_set.sort()
 
@@ -79,7 +83,7 @@ class Environment:
 
         print(self.data.head())
         self.data["date"] = self.data["date"].apply(utcToDate)
-        self.data['date'] = pd.to_datetime(self.data['date'], format="%Y-%m-%d")
+        #self.data['date'] = pd.to_datetime(self.data['date'], format="%Y-%m-%d")
         self.data.set_index('date', inplace=True)
         print(self.data.head())
 

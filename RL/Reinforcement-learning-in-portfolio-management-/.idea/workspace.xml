@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1b41c867-9ca0-49e1-96dd-9d4ac5e9b92e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../PGPortfolio/log.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../PGPortfolio/result.eps" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Multi-LSTM/Multivariate Time Series Forecasting with LSTMs in Keras- VirtualCurrency-bitbankData.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../../Multi-LSTM/Multivariate Time Series Forecasting with LSTMs in Keras- VirtualCurrency-bitbankData.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PGPortfolio/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../PGPortfolio/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PGPortfolio/pgportfolio/marketdata/.datamatrices.py.swp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PGPortfolio/pgportfolio/net_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/../PGPortfolio/pgportfolio/net_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/environment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../deep_trader/tensor-reinforcement/dqn_model.py" beforeDir="false" />
@@ -74,8 +66,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data/environment.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="439">
-              <caret line="101" column="33" lean-forward="true" selection-start-line="101" selection-start-column="33" selection-end-line="101" selection-end-column="33" />
+            <state relative-caret-position="381">
+              <caret line="85" column="9" selection-start-line="85" selection-start-column="9" selection-end-line="85" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="414">
+              <caret line="23" selection-start-line="23" selection-end-line="23" />
             </state>
           </provider>
         </entry>
@@ -83,7 +84,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/random.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5580">
+            <state relative-caret-position="655">
               <caret line="318" selection-start-line="318" selection-end-line="318" />
             </state>
           </provider>
@@ -92,8 +93,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="605">
-              <caret line="259" selection-start-line="259" selection-end-line="259" />
+            <state relative-caret-position="187">
+              <caret line="294" column="12" selection-start-line="294" selection-start-column="12" selection-end-line="294" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -116,8 +117,9 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>price_history</find>
       <find>codes</find>
+      <find>price_history</find>
+      <find>self.t</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -127,15 +129,16 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/config.json" />
         <option value="$PROJECT_DIR$/data/environment.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2066" />
-    <option name="y" value="4" />
-    <option name="width" value="1751" />
-    <option name="height" value="1181" />
+    <option name="x" value="219" />
+    <option name="y" value="47" />
+    <option name="width" value="1658" />
+    <option name="height" value="959" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -163,7 +166,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="/tmp/liangzp" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -192,7 +195,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="--mode=train" />
+      <option name="PARAMETERS" value="--mode=test" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -229,19 +232,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2066" y="4" width="1751" height="1181" extended-state="0" />
+    <frame x="219" y="47" width="1658" height="959" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18239722" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16829865" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32968128" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32968128" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.27115384" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.28606358" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32916668" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32885087" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32868525" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32868525" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
@@ -296,8 +299,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/data/environment.py</url>
-          <line>168</line>
+          <line>172</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/data/environment.py</url>
+          <line>129</line>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -315,23 +323,40 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>self.states[1]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.states[10]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.states[4]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.states[5]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.states[self.t]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/image/backtest_USA.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/agents/pg.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/random.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5580">
-          <caret line="318" selection-start-line="318" selection-end-line="318" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydevd_bundle/pydevd_breakpoints.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -343,17 +368,31 @@
     <entry file="file://$PROJECT_DIR$/data/coin.csv">
       <provider selected="true" editor-type-id="LargeFileEditor" />
     </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/random.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="655">
+          <caret line="318" selection-start-line="318" selection-end-line="318" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="605">
-          <caret line="259" selection-start-line="259" selection-end-line="259" />
+        <state relative-caret-position="187">
+          <caret line="294" column="12" selection-start-line="294" selection-start-column="12" selection-end-line="294" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/environment.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="439">
-          <caret line="101" column="33" lean-forward="true" selection-start-line="101" selection-start-column="33" selection-end-line="101" selection-end-column="33" />
+        <state relative-caret-position="381">
+          <caret line="85" column="9" selection-start-line="85" selection-start-column="9" selection-end-line="85" selection-end-column="9" />
         </state>
       </provider>
     </entry>

@@ -6,8 +6,8 @@
 		"ktype":"D"
 	},
 	"session":{
-		"start_date":"2015-07-01",
-		"end_date":"2019-06-30",
+		"start_date":"2015-07-01 00:00:00",
+		"end_date":"2019-06-30 23:59:59",
 		"market_types":"coin",
 	    "codes":["XRP","ETH"],
 		"features":["close","high"],
