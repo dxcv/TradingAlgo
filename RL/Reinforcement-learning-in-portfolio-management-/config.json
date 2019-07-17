@@ -11,7 +11,7 @@
 		"market_types":"coin",
 	    "codes":["XRP","ETH"],
 		"features":["close","high"],
-		"agents":["CNN","PG","10"],
+		"agents":["CNN","PPO","10"],
 		"epochs":"100",
 		"noise_flag":"False",
 		"record_flag":"False",

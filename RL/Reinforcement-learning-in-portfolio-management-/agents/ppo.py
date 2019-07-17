@@ -10,6 +10,7 @@ import time
 import math
 import pandas as pd
 from argparse import ArgumentParser
+import os
 
 EP_MAX = 1000
 EP_LEN = 200
@@ -185,7 +186,8 @@ class PPO(object):
         params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=name)
         return norm_dist, params
 
-    def predict(self, s):
+    #def predict(self, s):
+    def predict(self, s, a_previous):
         a = self.sess.run(self.sample_op, {self.tfs:s})[0]
         a=np.exp(a)
         a=a/np.sum(a)
@@ -206,7 +208,10 @@ class PPO(object):
         self.summary_writer.add_summary(summary_str, epoch)
 
     def save_model(self,epoch):
-        self.saver.save(self.sess, './saved_network/PPO/'+self.name,global_step=epoch)
+        path='./result/PPO/'+'saved_network/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        self.saver.save(self.sess, path+self.name, global_step=epoch)
 
     def save_transition(self,s,w,r,contin,s_next,action_precise):
         self.buffer.append([s,w,r])
@@ -230,3 +235,5 @@ class PPO(object):
         info["actor_loss"]=0
         return info
 
+    def reset_buffer(self):
+        self.buffer = list()

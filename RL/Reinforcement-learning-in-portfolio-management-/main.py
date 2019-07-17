@@ -63,8 +63,16 @@ class StockTrader():
     def print_result(self,epoch,agent,noise_flag):
         self.total_reward=math.exp(self.total_reward) * 100
         print('*-----Episode: {:d}, Reward:{:.6f}%-----*'.format(epoch, self.total_reward))
-        agent.write_summary(self.total_reward)
-        agent.save_model()
+        print(agent.name)
+        if agent.name.split('-')[1] == 'PG':
+            agent.write_summary(self.total_reward)
+        else :
+            agent.write_summary(self.loss, self.total_reward, self.ep_ave_max_q, self.actor_loss, epoch)
+
+        if agent.name.split('-')[1] == 'PG':
+            agent.save_model()
+        else :
+            agent.save_model(epoch)
 
     def plot_result(self):
         pd.Series(self.wealth_history).plot()
@@ -227,15 +235,16 @@ def session(config,args):
     print(codes)
     M=len(codes)+1
 
-    # if framework == 'DDPG':
-    #     print("*-----------------Loading DDPG Agent---------------------*")
-    #     from agents.ddpg import DDPG
-    #     agent = DDPG(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), reload_flag,trainable)
-    #
-    # elif framework == 'PPO':
-    #     print("*-----------------Loading PPO Agent---------------------*")
-    #     from agents.ppo import PPO
-    #     agent = PPO(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), reload_flag,trainable)
+    # STEVE TODO: comment out
+    if framework == 'DDPG':
+        print("*-----------------Loading DDPG Agent---------------------*")
+        from agents.ddpg import DDPG
+        agent = DDPG(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), reload_flag,trainable)
+    
+    elif framework == 'PPO':
+        print("*-----------------Loading PPO Agent---------------------*")
+        from agents.ppo import PPO
+        agent = PPO(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), reload_flag,trainable)
 
 
     stocktrader=StockTrader()
