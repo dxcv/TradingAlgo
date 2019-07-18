@@ -1,12 +1,19 @@
 WARNING:tensorflow:From /home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
 Instructions for updating:
 Colocations handled automatically by placer.
+2019-07-18 16:33:00.990359: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2019-07-18 16:33:00.994941: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 3591595000 Hz
+2019-07-18 16:33:00.995332: I tensorflow/compiler/xla/service/service.cc:150] XLA service 0x55558d8f0820 executing computations on platform Host. Devices:
+2019-07-18 16:33:00.995368: I tensorflow/compiler/xla/service/service.cc:158]   StreamExecutor device (0): <undefined>, <undefined>
+WARNING:tensorflow:From /home/AD/xiaosheng.xu/work/Algo/TradingAlgo/RL/Reinforcement-learning-in-portfolio-management-/agents/ppo.py:32: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.batch_normalization instead.
 *--------------------Training Status-------------------*
-Date from 2015-07-01  to  2019-06-30
+Date from 2015-07-01 00:00:00  to  2019-06-30 23:59:59
 Features: ['close', 'high']
 Agent:Noise( False )---Recoed( False )---Plot( False )
 Market Type: coin
-Predictor: CNN   Framework: PG   Window_length: 10
+Predictor: CNN   Framework: PPO   Window_length: 10
 Epochs: 100
 Trainable: True
 Reloaded Model: False
@@ -15,6 +22,7 @@ Noise_flag False
 Record_flag False
 Plot_flag False
 ['XRP', 'ETH']
+successfully load config
          date code        high  ...       volume    quoteVolume weightedAverage
 0  1439010600  ETH          50  ...  10.65496054  1033.26076055      0.01031197
 1  1439010900  ETH  0.00900002  ...   1.54996959   172.21873945           0.009
@@ -23,85 +31,64 @@ Plot_flag False
 4  1439011800  ETH  0.01279996  ...   2.44737213   436.71889907      0.00560399
 
 [5 rows x 9 columns]
-           code        high  ...    quoteVolume weightedAverage
-date                         ...                               
-2015-08-08  ETH          50  ...  1033.26076055      0.01031197
-2015-08-08  ETH  0.00900002  ...   172.21873945           0.009
-2015-08-08  ETH  0.00901001  ...       124.9895         0.00901
-2015-08-08  ETH  0.00901002  ...           3003      0.00686011
-2015-08-08  ETH  0.01279996  ...   436.71889907      0.00560399
+                    code        high  ...    quoteVolume weightedAverage
+date                                  ...                               
+2015-08-08 14:10:00  ETH          50  ...  1033.26076055      0.01031197
+2015-08-08 14:15:00  ETH  0.00900002  ...   172.21873945           0.009
+2015-08-08 14:20:00  ETH  0.00901001  ...       124.9895         0.00901
+2015-08-08 14:25:00  ETH  0.00901002  ...           3003      0.00686011
+2015-08-08 14:30:00  ETH  0.01279996  ...   436.71889907      0.00560399
 
 [5 rows x 8 columns]
-2
-27082 368337
-length of date_set before is  95 . codes is  ['reversed_USDC', 'XEM']
--> length of date_set after is  95 reversed_USDC
--> length of date_set after is  95 XEM
-104833 27082
-length of date_set before is  365 . codes is  ['STR', 'reversed_USDC']
--> length of date_set after is  365 STR
--> length of date_set after is  95 reversed_USDC
-368334 104833
-length of date_set before is  1280 . codes is  ['reversed_USDT', 'STR']
--> length of date_set after is  1280 reversed_USDT
--> length of date_set after is  365 STR
-104833 368352
-length of date_set before is  365 . codes is  ['STR', 'XMR']
--> length of date_set after is  365 STR
--> length of date_set after is  365 XMR
-368334 357239
-length of date_set before is  1280 . codes is  ['reversed_USDT', 'ETH']
--> length of date_set after is  1280 reversed_USDT
--> length of date_set after is  1241 ETH
-         date code        high  ...       volume    quoteVolume weightedAverage
-0  1439010600  ETH          50  ...  10.65496054  1033.26076055      0.01031197
-1  1439010900  ETH  0.00900002  ...   1.54996959   172.21873945           0.009
-2  1439011200  ETH  0.00901001  ...   1.12615562       124.9895         0.00901
-3  1439011500  ETH  0.00901002  ...  20.60093553           3003      0.00686011
-4  1439011800  ETH  0.01279996  ...   2.44737213   436.71889907      0.00560399
-
-[5 rows x 9 columns]
-           code        high  ...    quoteVolume weightedAverage
-date                         ...                               
-2015-08-08  ETH          50  ...  1033.26076055      0.01031197
-2015-08-08  ETH  0.00900002  ...   172.21873945           0.009
-2015-08-08  ETH  0.00901001  ...       124.9895         0.00901
-2015-08-08  ETH  0.00901002  ...           3003      0.00686011
-2015-08-08  ETH  0.01279996  ...   436.71889907      0.00560399
+data                               code  ...         weightedAverage
+date                                ...                        
+2018-09-27 00:00:00  reversed_USDT  ...  0.00015313010239555608
+2018-09-27 00:05:00  reversed_USDT  ...  0.00015338678712947617
+2018-09-27 00:10:00  reversed_USDT  ...    0.000153435029125785
+2018-09-27 00:15:00  reversed_USDT  ...  0.00015348471998446285
+2018-09-27 00:20:00  reversed_USDT  ...  0.00015348484141788758
 
 [5 rows x 8 columns]
-data            code      high  ...    quoteVolume weightedAverage
-date                       ...                               
-2015-08-08  ETH  50.00000  ...  1033.26076055      0.01031197
-2015-08-08  ETH   0.00900  ...   172.21873945           0.009
-2015-08-08  ETH   0.00901  ...       124.9895         0.00901
-2015-08-08  ETH   0.00901  ...           3003      0.00686011
-2015-08-08  ETH   0.01280  ...   436.71889907      0.00560399
-
-[5 rows x 8 columns]
+*-----------------Loading PPO Agent---------------------*
 Traceback (most recent call last):
-  File "main.py", line 319, in <module>
+  File "main.py", line 344, in <module>
     main()
-  File "main.py", line 316, in main
+  File "main.py", line 341, in main
     session(config,args)
-  File "main.py", line 249, in session
-    env.get_data(train_start_date, train_end_date, features, window_length, market, codes)
-  File "/home/AD/xiaosheng.xu/work/Algo/TradingAlgo/RL/Reinforcement-learning-in-portfolio-management-/data/environment.py", line 102, in get_data
-    asset_data=data[data["code"]==asset].reindex(self.date_set).sort_index()#加入时间的并集，会产生缺失值pd.to_datetime(self.date_list)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/util/_decorators.py", line 197, in wrapper
+  File "main.py", line 285, in session
+    reload_flag, trainable)
+  File "/home/AD/xiaosheng.xu/work/Algo/TradingAlgo/RL/Reinforcement-learning-in-portfolio-management-/agents/ppo.py", line 99, in __init__
+    l1 = con2d(self.tfs,'critic',True)[:,:,0,0]
+  File "/home/AD/xiaosheng.xu/work/Algo/TradingAlgo/RL/Reinforcement-learning-in-portfolio-management-/agents/ppo.py", line 32, in con2d
+    norm=tf.layers.batch_normalization(layer)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/util/deprecation.py", line 324, in new_func
     return func(*args, **kwargs)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/frame.py", line 3809, in reindex
-    return super(DataFrame, self).reindex(**kwargs)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/generic.py", line 4356, in reindex
-    fill_value, copy).__finalize__(self)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/frame.py", line 3741, in _reindex_axes
-    fill_value, limit, tolerance)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/frame.py", line 3752, in _reindex_index
-    allow_dups=False)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/generic.py", line 4490, in _reindex_with_indexers
-    copy=copy)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/internals/managers.py", line 1224, in reindex_indexer
-    self.axes[axis]._can_reindex(indexer)
-  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 3087, in _can_reindex
-    raise ValueError("cannot reindex from a duplicate axis")
-ValueError: cannot reindex from a duplicate axis
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/layers/normalization.py", line 313, in batch_normalization
+    return layer.apply(inputs, training=training)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/keras/engine/base_layer.py", line 1227, in apply
+    return self.__call__(inputs, *args, **kwargs)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/layers/base.py", line 530, in __call__
+    outputs = super(Layer, self).__call__(inputs, *args, **kwargs)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/keras/engine/base_layer.py", line 538, in __call__
+    self._maybe_build(inputs)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/keras/engine/base_layer.py", line 1603, in _maybe_build
+    self.build(input_shapes)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/keras/layers/normalization.py", line 330, in build
+    trainable=True)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/layers/base.py", line 435, in add_weight
+    getter=vs.get_variable)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/keras/engine/base_layer.py", line 349, in add_weight
+    aggregation=aggregation)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/training/checkpointable/base.py", line 607, in _add_variable_with_custom_getter
+    **kwargs_for_getter)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/ops/variable_scope.py", line 1479, in get_variable
+    aggregation=aggregation)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/ops/variable_scope.py", line 1220, in get_variable
+    aggregation=aggregation)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/ops/variable_scope.py", line 547, in get_variable
+    aggregation=aggregation)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/ops/variable_scope.py", line 499, in _true_getter
+    aggregation=aggregation)
+  File "/home/AD/xiaosheng.xu/anaconda3/lib/python3.6/site-packages/tensorflow/python/ops/variable_scope.py", line 866, in _get_single_variable
+    "reuse=tf.AUTO_REUSE in VarScope?" % name)
+ValueError: Variable critic/critic/batch_normalization/gamma does not exist, or was not created with tf.get_variable(). Did you mean to set reuse=tf.AUTO_REUSE in VarScope?

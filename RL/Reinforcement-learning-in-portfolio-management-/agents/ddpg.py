@@ -346,3 +346,6 @@ class DDPG:
 
     def reset_buffer(self):
         self.buffer=list()
+
+    def close(self):
+        self.sess.close()

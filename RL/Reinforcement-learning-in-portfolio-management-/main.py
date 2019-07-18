@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 from agents.ornstein_uhlenbeck import OrnsteinUhlenbeckActionNoise
 from agents.pg import PG
+from agents.ddpg import DDPG
+from agents.ppo import PPO
 import datetime
 import os
 import seaborn as sns
@@ -236,15 +238,7 @@ def session(config,args):
     M=len(codes)+1
 
     # STEVE TODO: comment out
-    if framework == 'DDPG':
-        print("*-----------------Loading DDPG Agent---------------------*")
-        from agents.ddpg import DDPG
-        agent = DDPG(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), reload_flag,trainable)
-    
-    elif framework == 'PPO':
-        print("*-----------------Loading PPO Agent---------------------*")
-        from agents.ppo import PPO
-        agent = PPO(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), reload_flag,trainable)
+
 
 
     stocktrader=StockTrader()
@@ -280,6 +274,16 @@ def session(config,args):
                 agent = PG(len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), reload_flag,
                            trainable,noise_flag,args['num'])
 
+            if framework == 'DDPG':
+                print("*-----------------Loading DDPG Agent---------------------*")
+                agent = DDPG(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config),
+                            reload_flag, trainable)
+
+            if framework == 'PPO':
+                print("*-----------------Loading PPO Agent---------------------*")
+                agent = PPO(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config),
+                            reload_flag, trainable)
+
             print("Training with {:d}".format(epochs))
             for epoch in range(epochs):
                 print("Now we are at epoch", epoch)
@@ -302,7 +306,19 @@ def session(config,args):
             dict_data=json.load(f)
         test_start_date,test_end_date,codes=datetime.datetime.strptime(dict_data['test_start_date'],'%Y-%m-%d'),datetime.datetime.strptime(dict_data['test_end_date'],'%Y-%m-%d'),dict_data['codes']
         env.get_data(test_start_date,test_end_date,features,window_length,market,codes)
-        backtest([PG(len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), 'True','False','True',args['num'])],
+
+        #backtest([PG(len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), 'True','False','True',args['num'])],
+        #         env)
+        if framework == 'PG':
+            backtest([PG(len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), 'True','False','True',args['num'])],
+                 env)
+
+        if framework == 'DDPG':
+            backtest([DDPG(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), 'True','False')],
+                 env)
+
+        elif framework == 'PPO':
+            backtest([PPO(predictor, len(codes) + 1, int(window_length), len(features), '-'.join(agent_config), 'True','False')],
                  env)
 
 def build_parser():

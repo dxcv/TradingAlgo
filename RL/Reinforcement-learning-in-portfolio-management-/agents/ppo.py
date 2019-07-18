@@ -91,6 +91,9 @@ class PPO(object):
 
         self.gamma=0.99
 
+        #tf.reset_default_graph()
+        #tf.get_variable_scope().reuse_variables()
+
         # critic
         with tf.variable_scope('critic'):
             l1 = con2d(self.tfs,'critic',True)[:,:,0,0]
@@ -178,7 +181,7 @@ class PPO(object):
 
     def _build_anet(self, name, trainable):
         with tf.variable_scope(name):
-            input=con2d(self.tfs,'critic',trainable)[:,:,0,0]
+            input=con2d(self.tfs,'actor',trainable)[:,:,0,0]
             l1 = dense(input, 100,'relu', 'actor',trainable)
             mu = dense(l1, self.M, 'tanh', 'actor',trainable)
             sigma =dense(l1, self.M, 'softplus','actor',trainable)
@@ -237,3 +240,6 @@ class PPO(object):
 
     def reset_buffer(self):
         self.buffer = list()
+
+    def close(self):
+        self.sess.close()
