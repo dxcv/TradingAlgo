@@ -91,6 +91,7 @@ class PPO(object):
 
         self.gamma=0.99
 
+        self.result_save_path = './result/PPO/'+'saved_network/'
         #tf.reset_default_graph()
         #tf.get_variable_scope().reuse_variables()
 
@@ -150,9 +151,9 @@ class PPO(object):
                     self.saver.restore(self.sess, checkpoint.model_checkpoint_path)
                     print("Successfully loaded:", checkpoint.model_checkpoint_path)
                 else:
-                    print("Could not find old network weights")
+                    print("22 Could not find old network weights")
             except:
-                print("Could not find old network weights")
+                print("11 Could not find old network weights")
                 self.sess.run(tf.global_variables_initializer())
         else:
             self.sess.run(tf.global_variables_initializer())
@@ -212,6 +213,7 @@ class PPO(object):
 
     def save_model(self,epoch):
         path='./result/PPO/'+'saved_network/'
+        self.result_save_patha = path
         if not os.path.exists(path):
             os.makedirs(path)
         self.saver.save(self.sess, path+self.name, global_step=epoch)
